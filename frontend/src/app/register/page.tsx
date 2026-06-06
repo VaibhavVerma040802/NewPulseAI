@@ -26,8 +26,8 @@ export default function RegisterPage() {
         password
       });
       
-      // Redirect to verification page instead of auto-login
-      router.push(`/verify-email?email=${encodeURIComponent(email)}`);
+      // Redirect to login page
+      router.push('/login');
     } catch (err: any) {
       setError(err.response?.data?.detail || "Registration failed. Please try again.");
     } finally {
