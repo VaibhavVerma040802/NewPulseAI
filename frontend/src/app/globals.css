@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  /* Fonts */
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-playfair), ui-serif, Georgia, serif;
+  --font-mono: var(--font-dm-mono), ui-monospace, SFMono-Regular, monospace;
+
+  /* Colors based on new UI */
+  --color-background: #0a101a;
+  --color-foreground: #f1f5f9;
+  
+  --color-card: #141e2e;
+  --color-card-foreground: #f1f5f9;
+  
+  --color-popover: #141e2e;
+  --color-popover-foreground: #f1f5f9;
+  
+  --color-primary: #3b82f6;
+  --color-primary-foreground: #ffffff;
+  
+  --color-secondary: #0f1623;
+  --color-secondary-foreground: #f1f5f9;
+  
+  --color-muted: #1e2d45;
+  --color-muted-foreground: #64748b;
+  
+  --color-accent: #1e2d45;
+  --color-accent-foreground: #f1f5f9;
+  
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #f8fafc;
+  
+  --color-border: #1e2d45;
+  --color-input: #0f1623;
+  --color-ring: #3b82f6;
+
+  --radius-lg: 0.5rem;
+  --radius-md: calc(0.5rem - 2px);
+  --radius-sm: calc(0.5rem - 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+    background-color: var(--color-background);
+  }
+  
+  input, select, textarea {
+    @apply bg-[#0f1623] border border-[#1e2d45] text-[#f1f5f9] rounded-lg px-[13px] py-[9px] font-sans text-[13px] outline-none w-full transition-colors duration-200;
+  }
+  input:focus, select:focus {
+    @apply border-[#3b82f6];
+  }
+  input::placeholder, textarea::placeholder {
+    @apply text-[#475569];
+  }
+
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0a101a;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #1e2d45;
+    border-radius: 4px;
+  }
+}
+
+@layer components {
+  .art-card {
+    @apply bg-[#141e2e] border border-[#1e2d45] rounded-xl p-[18px] cursor-pointer transition-colors duration-200;
+  }
+  .art-card:hover {
+    @apply border-[#3b82f6];
+  }
+}

@@ -1,0 +1,122 @@
+<USER_REQUEST>
+App is not working according to PRD. The flow is not right. Also so many things are not working. I'm attaching the PRD again- PRODUCT REQUIREMENTS DOCUMENT (PRD)
+NewsPulse AI
+Intelligent News Intelligence & Conversational Analysis Platform
+Version: 1.0
+Project Type: MCA Final Year Major Project
+Duration: 4 days
+Technology Stack:
+•	React.js / Next.js
+•	FastAPI (Python)
+•	PostgreSQL
+•	ChromaDB
+•	HuggingFace Transformers
+•	LangChain
+•	OpenAI/Gemini APIs
+________________________________________
+1. PROJECT OVERVIEW
+NewsPulse AI is an AI-powered news intelligence platform that aggregates news from multiple sources and transforms raw articles into concise, actionable insights.
+The platform leverages Natural Language Processing (NLP), Large Language Models (LLMs), Retrieval-Augmented Generation (RAG), sentiment analysis, entity extraction, and recommendation systems to provide users with a smarter way to consume information.
+Unlike traditional news websites, NewsPulse AI allows users to interact with news conversationally, explore evolving stories, generate summaries, and receive personalized news intelligence.
+________________________________________
+2. PROBLEM STATEMENT
+Modern users face significant information overload due to:
+•	Thousands of articles published daily
+•	Duplicate reporting across sources
+•	Long-form content requiring substantial reading time
+•	Difficulty tracking developing stories
+•	Lack of contextual understanding
+•	Difficulty identifying trustworthy information
+The proposed system addresses these challenges through automated AI-powered analysis and conversational exploration.
+________________________________________
+3. PROJECT OBJECTIVES
+Primary Objectives:
+•	Aggregate news from multiple sources
+•	Generate AI-powered summaries
+•	Enable conversational interaction with news
+•	Provide sentiment insights
+•	Generate event timelines
+•	Personalize news recommendations
+•	Evaluate article credibility
+Secondary Object
+<truncated 8056 bytes>
+g Generation ↓ ChromaDB ↓ RAG Chatbot ↓ React Frontend
+________________________________________
+22. TECHNOLOGY STACK
+Frontend
+•	React.js
+•	Next.js
+•	Tailwind CSS
+•	ShadCN UI
+•	Recharts
+Backend
+•	FastAPI
+•	Python
+AI/NLP
+•	Transformers
+•	HuggingFace
+•	LangChain
+•	SpaCy
+•	NLTK
+Database
+•	PostgreSQL
+Vector Database
+•	ChromaDB
+Authentication
+•	JWT
+•	OAuth 2.0
+Deployment
+•	Docker
+•	Nginx
+•	Render / AWS
+________________________________________
+23. NON-FUNCTIONAL REQUIREMENTS
+Performance
+•	API Response < 2 sec
+•	Search < 2 sec
+•	Summary Generation < 5 sec
+Security
+•	JWT Authentication
+•	HTTPS
+•	Password Hashing
+•	Rate Limiting
+Scalability
+•	10,000+ Articles
+•	1,000+ Users
+Availability
+•	99% Uptime
+________________________________________
+24. TESTING STRATEGY
+•	Unit Testing
+•	API Testing
+•	Database Testing
+•	Security Testing
+•	Load Testing
+•	User Acceptance Testing
+________________________________________
+25. PROJECT DELIVERABLES
+•	Complete Source Code
+•	Database Schema
+•	API Documentation
+•	Deployment Guide
+•	Testing Report
+•	User Manual
+•	Final Project Report
+•	PowerPoint Presentation
+•	Working Deployed Application
+________________________________________
+PROJECT TAGLINE
+“Transforming News Into Intelligence”
+NewsPulse AI is a full-stack AI-powered platform that combines NLP, LLMs, RAG architecture, recommendation systems, and conversational AI to revolutionize the way users consume and understand news.
+
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-06-04T14:12:13+05:30.
+
+The user's current state is as follows:
+Active Document: c:\Users\vaibhav verma\NewPulseAI\frontend\src\app\settings\page.tsx (LANGUAGE_TSX)
+Cursor is on line: 1
+Other open documents:
+- c:\Users\vaibhav verma\NewPulseAI\frontend\src\app\settings\page.tsx (LANGUAGE_TSX)
+- c:\Users\vaibhav verma\NewPulseAI\backend\alembic\env.py (LANGUAGE_PYTHON)
+</ADDITIONAL_METADATA>
