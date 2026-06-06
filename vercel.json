@@ -19,11 +19,5 @@
       "source": "/(.*)",
       "destination": "/frontend/$1"
     }
-  ],
-  "crons": [
-    {
-      "path": "/api/cron/fetch-news",
-      "schedule": "*/30 * * * *"
-    }
   ]
 }
