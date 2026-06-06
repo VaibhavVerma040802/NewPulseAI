@@ -20,3 +20,4 @@ pgvector
 langchain-community>=0.2.4
 apscheduler>=3.10.4
 passlib[bcrypt]==1.7.4
+email-validator==2.1.1
