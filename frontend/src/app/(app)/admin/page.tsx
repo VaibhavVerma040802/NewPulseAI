@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Navbar } from "@/components/navbar";
 import { api } from "@/lib/api";
 
 interface AnalyticsData {
@@ -42,8 +41,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-background font-sans pb-10">
-      <Navbar />
-      
+            
       <div className="max-w-[1200px] mx-auto px-5 pt-[30px]">
         <div className="mb-[30px]">
           <h1 className="font-serif text-[28px] font-bold text-foreground m-0 mb-2">Admin Dashboard</h1>
@@ -90,3 +88,4 @@ export default function AdminDashboard() {
     </div>
   );
 }
+

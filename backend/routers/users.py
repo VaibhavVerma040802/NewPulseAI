@@ -92,3 +92,34 @@ def get_user_dashboard(
         "activity": activity_data,
         "top_topics": top_topics
     }
+
+from pydantic import BaseModel
+from typing import List
+
+class UpdateInterestsRequest(BaseModel):
+    categories: List[str]
+
+@router.post("/me/interests")
+def update_interests(
+    req: UpdateInterestsRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    from models.interaction import UserInterest
+    db.query(UserInterest).filter(UserInterest.user_id == current_user.user_id).delete()
+    
+    for category in req.categories:
+        interest = UserInterest(user_id=current_user.user_id, category=category)
+        db.add(interest)
+        
+    db.commit()
+    return {"message": "Interests updated successfully"}
+    
+@router.get("/me/interests", response_model=List[str])
+def get_interests(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    from models.interaction import UserInterest
+    interests = db.query(UserInterest).filter(UserInterest.user_id == current_user.user_id).all()
+    return [i.category for i in interests]

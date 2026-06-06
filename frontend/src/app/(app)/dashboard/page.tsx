@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Navbar } from "@/components/navbar";
 import { ArticleCard, Article } from "@/components/ArticleCard";
 import { api } from "@/lib/api";
 
@@ -39,8 +38,7 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-background font-sans">
-        <Navbar />
-        <div className="flex justify-center items-center h-[calc(100vh-57px)] text-primary">
+                <div className="flex justify-center items-center h-[calc(100vh-57px)] text-primary">
           Loading dashboard...
         </div>
       </div>
@@ -53,8 +51,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-background font-sans">
-      <Navbar />
-      
+            
       <div className="max-w-[1100px] mx-auto px-5 py-[28px]">
         <div className="flex justify-between items-start mb-[28px] flex-wrap gap-4">
           <div>
@@ -173,3 +170,4 @@ export default function DashboardPage() {
     </div>
   );
 }
+

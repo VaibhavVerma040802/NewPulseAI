@@ -26,8 +26,19 @@ export default function RegisterPage() {
         password
       });
       
-      // Redirect to login page
-      router.push('/login');
+      // Auto-login
+      const loginParams = new URLSearchParams();
+      loginParams.append('username', email);
+      loginParams.append('password', password);
+      
+      const loginRes = await api.post("/auth/login", loginParams, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      });
+      
+      localStorage.setItem("token", loginRes.data.access_token);
+      router.push('/onboarding');
     } catch (err: any) {
       setError(err.response?.data?.detail || "Registration failed. Please try again.");
     } finally {

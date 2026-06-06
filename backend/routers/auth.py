@@ -24,6 +24,11 @@ class GoogleAuthRequest(BaseModel):
 class VerifyEmailRequest(BaseModel):
     token: str
 
+class AdminLoginRequest(BaseModel):
+    email: str
+    password: str
+    admin_secret: str
+
 @router.post("/register", response_model=UserResponse)
 def register(user_in: UserCreate, background_tasks: BackgroundTasks, db: Session = Depends(get_db)) -> Any:
     user = db.query(User).filter(User.email == user_in.email).first()
@@ -61,6 +66,30 @@ def login(
 
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     
+    return {
+        "access_token": create_access_token(
+            {"sub": str(user.user_id)}, expires_delta=access_token_expires
+        ),
+        "token_type": "bearer",
+    }
+
+@router.post("/admin-login", response_model=Token)
+def admin_login(req: AdminLoginRequest, db: Session = Depends(get_db)):
+    from models.user import RoleEnum
+    user = db.query(User).filter(User.email == req.email).first()
+    if not user or not verify_password(req.password, user.password_hash):
+        raise HTTPException(status_code=400, detail="Incorrect email or password")
+        
+    import os
+    admin_secret = os.environ.get("ADMIN_SECRET_KEY", "newpulse_admin_secret_123")
+    if req.admin_secret == admin_secret:
+        user.role = RoleEnum.ADMIN
+        db.commit()
+    else:
+        if str(user.role) not in ["ADMIN", "RoleEnum.ADMIN"]:
+            raise HTTPException(status_code=403, detail="Invalid admin secret and you are not an admin")
+
+    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     return {
         "access_token": create_access_token(
             {"sub": str(user.user_id)}, expires_delta=access_token_expires

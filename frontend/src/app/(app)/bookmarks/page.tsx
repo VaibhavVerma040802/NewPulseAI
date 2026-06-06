@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Navbar } from "@/components/navbar";
 import { ArticleCard, Article } from "@/components/ArticleCard";
 import { api } from "@/lib/api";
 
@@ -32,8 +31,7 @@ export default function BookmarksPage() {
 
   return (
     <div className="min-h-screen bg-background font-sans">
-      <Navbar />
-      
+            
       <div className="max-w-[960px] mx-auto px-[20px] py-[28px]">
         <div className="flex justify-between items-center mb-[24px]">
           <div>
@@ -79,3 +77,4 @@ export default function BookmarksPage() {
     </div>
   );
 }
+

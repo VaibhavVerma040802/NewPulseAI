@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
+import { motion } from "framer-motion";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -13,22 +14,35 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const [isAdminLogin, setIsAdminLogin] = useState(false);
+  const [adminSecret, setAdminSecret] = useState("");
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
     try {
-      const params = new URLSearchParams();
-      params.append("username", email);
-      params.append("password", password);
+      if (isAdminLogin) {
+        const response = await api.post("/auth/admin-login", {
+          email,
+          password,
+          admin_secret: adminSecret
+        });
+        localStorage.setItem("token", response.data.access_token);
+        router.push("/admin");
+      } else {
+        const params = new URLSearchParams();
+        params.append("username", email);
+        params.append("password", password);
 
-      const response = await api.post("/auth/login", params, {
-        headers: { "Content-Type": "application/x-www-form-urlencoded" }
-      });
-      
-      localStorage.setItem("token", response.data.access_token);
-      router.push("/dashboard");
+        const response = await api.post("/auth/login", params, {
+          headers: { "Content-Type": "application/x-www-form-urlencoded" }
+        });
+        
+        localStorage.setItem("token", response.data.access_token);
+        router.push("/dashboard");
+      }
     } catch (err: any) {
       setError(err.response?.data?.detail || "Failed to login. Please try again.");
     } finally {
@@ -45,8 +59,8 @@ export default function LoginPage() {
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary/80 inline-flex items-center justify-center text-[20px] mb-3">
             ⚡
           </div>
-          <h1 className="font-serif text-[24px] font-bold text-foreground m-0 mb-1.5">Welcome back</h1>
-          <p className="text-muted-foreground text-[13px] m-0">Enter your details to access your dashboard.</p>
+          <h1 className="font-serif text-[24px] font-bold text-foreground m-0 mb-1.5">{isAdminLogin ? "Admin Login" : "Welcome back"}</h1>
+          <p className="text-muted-foreground text-[13px] m-0">{isAdminLogin ? "Enter your details and secret to access the admin dashboard." : "Enter your details to access your dashboard."}</p>
         </div>
 
         {error && (
@@ -79,6 +93,20 @@ export default function LoginPage() {
               placeholder="••••••••"
             />
           </div>
+          
+          {isAdminLogin && (
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="overflow-hidden">
+              <label className="block text-muted-foreground text-[12px] font-medium mb-1.5">Admin Secret</label>
+              <input 
+                type="password"
+                required
+                value={adminSecret}
+                onChange={(e) => setAdminSecret(e.target.value)}
+                placeholder="••••••••"
+              />
+            </motion.div>
+          )}
+
           <button 
             type="submit" 
             disabled={loading}
@@ -87,6 +115,16 @@ export default function LoginPage() {
             {loading ? "Signing in..." : "Sign In"}
           </button>
         </form>
+
+        <div className="mt-4 text-center">
+          <button 
+            type="button" 
+            onClick={() => setIsAdminLogin(!isAdminLogin)}
+            className="text-[12px] text-muted-foreground hover:text-foreground bg-transparent border-none cursor-pointer underline decoration-muted-foreground/30 underline-offset-4"
+          >
+            {isAdminLogin ? "Back to User Login" : "Login as Admin"}
+          </button>
+        </div>
 
         <p className="text-center text-muted-foreground text-[13px] mt-6">
           Don't have an account? <Link href="/register" className="text-primary font-medium hover:underline">Sign up</Link>

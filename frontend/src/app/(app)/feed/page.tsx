@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { ArticleCard, Article } from "@/components/ArticleCard";
-import { Navbar } from "@/components/navbar";
 
 export default function FeedPage() {
   const router = useRouter();
@@ -61,8 +60,7 @@ export default function FeedPage() {
 
   return (
     <div className="min-h-screen bg-background font-sans">
-      <Navbar />
-      
+            
       <div className="max-w-[1050px] mx-auto px-5 py-[28px]">
         <div className="flex justify-between items-center mb-[24px] flex-wrap gap-4">
           <div>
@@ -135,3 +133,4 @@ export default function FeedPage() {
     </div>
   );
 }
+

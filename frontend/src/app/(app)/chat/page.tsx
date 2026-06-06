@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Navbar } from "@/components/navbar";
 import { api } from "@/lib/api";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -38,10 +37,29 @@ function ChatContent() {
   // Track if we've initialized the query prompt so we only do it once
   const [initializedPrompt, setInitializedPrompt] = useState(false);
 
+  const [userInitials, setUserInitials] = useState("U");
+
   useEffect(() => {
     if (!localStorage.getItem("token")) {
       router.push("/login");
+      return;
     }
+    const fetchMe = async () => {
+      try {
+        const res = await api.get("/auth/me");
+        if (res.data && res.data.full_name) {
+          const names = res.data.full_name.split(" ");
+          if (names.length >= 2) {
+            setUserInitials((names[0][0] + names[1][0]).toUpperCase());
+          } else {
+            setUserInitials(names[0].substring(0, 2).toUpperCase());
+          }
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchMe();
   }, [router]);
 
   const scrollToBottom = () => {
@@ -113,8 +131,7 @@ function ChatContent() {
 
   return (
     <div className="min-h-screen bg-background font-sans flex flex-col">
-      <Navbar />
-      
+            
       <div className="max-w-[900px] w-full mx-auto h-[calc(100vh-57px)] flex flex-col p-5 pb-10">
         <div className="text-center mb-[30px] shrink-0">
           <h1 className="font-serif text-[32px] font-bold text-foreground m-0 mb-2">Ask NewsPulse</h1>
@@ -137,7 +154,7 @@ function ChatContent() {
                     </div>
                   ) : (
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center text-white font-bold text-[12px] shrink-0">
-                      AK
+                      {userInitials}
                     </div>
                   )}
                   
@@ -212,3 +229,4 @@ export default function ChatPage() {
     </Suspense>
   );
 }
+

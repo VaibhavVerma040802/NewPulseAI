@@ -2,7 +2,6 @@
 
 import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
-import { Navbar } from "@/components/navbar";
 import { api } from "@/lib/api";
 import { formatDistanceToNow } from "date-fns";
 
@@ -49,8 +48,7 @@ export default function ArticlePage({ params }: { params: Promise<{ id: string }
   if (loading || !article) {
     return (
       <div className="min-h-screen bg-background font-sans">
-        <Navbar />
-        <div className="max-w-[820px] mx-auto p-[28px_20px] text-center text-muted-foreground">
+                <div className="max-w-[820px] mx-auto p-[28px_20px] text-center text-muted-foreground">
           Loading article...
         </div>
       </div>
@@ -67,8 +65,7 @@ export default function ArticlePage({ params }: { params: Promise<{ id: string }
 
   return (
     <div className="min-h-screen bg-background font-sans">
-      <Navbar />
-      <div className="max-w-[820px] mx-auto py-[28px] px-[20px]">
+            <div className="max-w-[820px] mx-auto py-[28px] px-[20px]">
         <button 
           onClick={() => router.back()}
           className="bg-transparent border-none text-muted-foreground cursor-pointer font-sans text-[13px] mb-[20px] hover:text-foreground transition-colors"

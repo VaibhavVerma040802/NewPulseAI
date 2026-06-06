@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Navbar } from "@/components/navbar";
 import { api } from "@/lib/api";
 
 export default function ProfilePage() {
@@ -43,8 +42,7 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-background font-sans pb-10">
-      <Navbar />
-      
+            
       <div className="max-w-[760px] mx-auto px-[20px] pt-[28px]">
         <h1 className="font-serif text-[26px] font-bold text-foreground m-0 mb-[24px]">Profile & Settings</h1>
         
@@ -74,20 +72,10 @@ export default function ProfilePage() {
         </div>
 
         {[
-          ["Account Security", [
+          ["Account Information", [
             ["Email Address", user?.email || "..."], 
-            ["Password", "Last changed recently"], 
-            ["Two-Factor Auth", "Not enabled"]
-          ]], 
-          ["Notifications", [
-            ["Daily AI Brief", "Email at 6:00 AM IST"], 
-            ["Breaking News", "Push notifications"], 
-            ["Weekly Digest", "Every Sunday"]
-          ]], 
-          ["Preferences", [
-            ["Default Summary", "Detailed"], 
-            ["Language", "English"], 
-            ["Timezone", "Local time"]
+            ["Account Role", user?.role || "..."], 
+            ["Status", user?.status || "..."]
           ]]
         ].map(([title, items]: any) => (
           <div key={title} className="bg-card border border-border rounded-2xl p-[22px] mb-[14px]">
@@ -98,9 +86,6 @@ export default function ProfilePage() {
                   <p className="text-muted-foreground text-[13px] font-sans font-medium m-0">{l}</p>
                   <p className="text-muted-foreground/80 text-[11px] font-sans m-0 mt-[2px]">{v}</p>
                 </div>
-                <button className="bg-transparent border border-border text-primary px-[13px] py-[5px] rounded-md cursor-pointer font-sans text-[12px] hover:bg-muted/50 transition-colors">
-                  Change
-                </button>
               </div>
             ))}
           </div>
@@ -116,3 +101,4 @@ export default function ProfilePage() {
     </div>
   );
 }
+
