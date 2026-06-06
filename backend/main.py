@@ -38,20 +38,26 @@ app.add_middleware(
 
 from routers import auth, news, nlp, chat, recommendations, admin, bookmarks, users, cron
 
-@app.get("/")
+from fastapi import APIRouter
+
+api_router = APIRouter(prefix="/api")
+
+@api_router.get("/")
 def read_root():
     return {"message": f"Welcome to {settings.PROJECT_NAME} API v{settings.VERSION}"}
 
-app.include_router(auth.router)
-app.include_router(users.router)
-app.include_router(news.router)
-app.include_router(nlp.router)
-app.include_router(chat.router)
-app.include_router(recommendations.router)
-app.include_router(admin.router)
-app.include_router(bookmarks.router)
-app.include_router(cron.router)
+api_router.include_router(auth.router)
+api_router.include_router(users.router)
+api_router.include_router(news.router)
+api_router.include_router(nlp.router)
+api_router.include_router(chat.router)
+api_router.include_router(recommendations.router)
+api_router.include_router(admin.router)
+api_router.include_router(bookmarks.router)
+api_router.include_router(cron.router)
 
-@app.get("/health")
+@api_router.get("/health")
 def health_check():
     return {"status": "ok"}
+
+app.include_router(api_router)
