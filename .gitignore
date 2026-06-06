@@ -39,3 +39,5 @@ yarn-error.log*
 
 # Project specific
 LATEST_VERIFICATION_LINK.txt
+
+backend/chroma_data/
