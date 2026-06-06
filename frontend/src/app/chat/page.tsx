@@ -112,16 +112,16 @@ function ChatContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a101a] font-sans flex flex-col">
+    <div className="min-h-screen bg-background font-sans flex flex-col">
       <Navbar />
       
       <div className="max-w-[900px] w-full mx-auto h-[calc(100vh-57px)] flex flex-col p-5 pb-10">
         <div className="text-center mb-[30px] shrink-0">
-          <h1 className="font-serif text-[32px] font-bold text-[#f1f5f9] m-0 mb-2">Ask NewsPulse</h1>
-          <p className="text-[#64748b] text-[14px] m-0">Our RAG pipeline retrieves the most relevant articles to answer your questions.</p>
+          <h1 className="font-serif text-[32px] font-bold text-foreground m-0 mb-2">Ask NewsPulse</h1>
+          <p className="text-muted-foreground text-[14px] m-0">Our RAG pipeline retrieves the most relevant articles to answer your questions.</p>
         </div>
 
-        <div className="flex-1 bg-[#141e2e] border border-[#1e2d45] rounded-2xl flex flex-col overflow-hidden shadow-sm">
+        <div className="flex-1 bg-card border border-border rounded-2xl flex flex-col overflow-hidden shadow-sm">
           <div className="flex-1 p-5 overflow-y-auto flex flex-col gap-5">
             <AnimatePresence>
               {messages.map((msg) => (
@@ -132,11 +132,11 @@ function ChatContent() {
                   className={`flex gap-3 max-w-[80%] ${msg.role === "user" ? "self-end flex-row-reverse" : "self-start"}`}
                 >
                   {msg.role === "assistant" ? (
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#3b82f6] to-[#8b5cf6] flex items-center justify-center text-[16px] shrink-0">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center text-[16px] shrink-0">
                       ⚡
                     </div>
                   ) : (
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#3b82f6] to-[#8b5cf6] flex items-center justify-center text-white font-bold text-[12px] shrink-0">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center text-white font-bold text-[12px] shrink-0">
                       AK
                     </div>
                   )}
@@ -144,8 +144,8 @@ function ChatContent() {
                   <div className="flex flex-col gap-2">
                     <div className={`font-sans text-[14px] leading-[1.5] whitespace-pre-wrap ${
                       msg.role === "user" 
-                        ? "bg-[#3b82f6] text-white p-3 rounded-[12px_0_12px_12px]" 
-                        : "bg-[#1e2d45] text-[#f1f5f9] p-3 rounded-[0_12px_12px_12px]"
+                        ? "bg-primary text-white p-3 rounded-[12px_0_12px_12px]" 
+                        : "bg-muted text-foreground p-3 rounded-[0_12px_12px_12px]"
                     }`}>
                       {msg.content}
                     </div>
@@ -155,7 +155,7 @@ function ChatContent() {
                         {msg.citations.map((cite, i) => (
                           <span 
                             key={i} 
-                            className="text-[11px] text-[#94a3b8] bg-[#0a101a] border border-[#1e2d45] px-2 py-1 rounded-[4px] flex items-center gap-1 cursor-pointer hover:bg-[#1e2d45]"
+                            className="text-[11px] text-muted-foreground bg-background border border-border px-2 py-1 rounded-[4px] flex items-center gap-1 cursor-pointer hover:bg-muted"
                             title={cite.title}
                           >
                             📰 {cite.source}
@@ -170,10 +170,10 @@ function ChatContent() {
             
             {loading && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex gap-3 max-w-[80%] self-start">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#3b82f6] to-[#8b5cf6] flex items-center justify-center text-[16px] shrink-0">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center text-[16px] shrink-0">
                   ⚡
                 </div>
-                <div className="bg-[#1e2d45] text-[#94a3b8] p-3 rounded-[0_12px_12px_12px] font-sans text-[14px]">
+                <div className="bg-muted text-muted-foreground p-3 rounded-[0_12px_12px_12px] font-sans text-[14px]">
                   Thinking...
                 </div>
               </motion.div>
@@ -181,19 +181,19 @@ function ChatContent() {
             <div ref={messagesEndRef} />
           </div>
 
-          <div className="p-4 border-t border-[#1e2d45] bg-[#0f1623]">
-            <form onSubmit={handleSend} className="flex gap-2.5 bg-[#0a101a] border border-[#1e2d45] rounded-xl p-2 relative">
+          <div className="p-4 border-t border-border bg-secondary">
+            <form onSubmit={handleSend} className="flex gap-2.5 bg-background border border-border rounded-xl p-2 relative">
               <input 
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask about any news topic..."
-                className="flex-1 bg-transparent border-none text-[#f1f5f9] font-sans text-[14px] px-2 focus:outline-none placeholder:text-[#475569]"
+                className="flex-1 bg-transparent border-none text-foreground font-sans text-[14px] px-2 focus:outline-none placeholder:text-muted-foreground/80"
               />
               <button 
                 type="submit"
                 disabled={!input.trim() || loading}
-                className="bg-[#3b82f6] hover:bg-[#2563eb] disabled:opacity-50 border-none text-white w-9 h-9 rounded-lg cursor-pointer flex items-center justify-center transition-colors"
+                className="bg-primary hover:bg-[#2563eb] disabled:opacity-50 border-none text-white w-9 h-9 rounded-lg cursor-pointer flex items-center justify-center transition-colors"
               >
                 →
               </button>
@@ -207,7 +207,7 @@ function ChatContent() {
 
 export default function ChatPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#0a101a] flex items-center justify-center text-white">Loading...</div>}>
+    <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center text-white">Loading...</div>}>
       <ChatContent />
     </Suspense>
   );

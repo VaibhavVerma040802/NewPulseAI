@@ -18,13 +18,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className="dark">
-      <body className={`${dmSans.variable} ${playfair.variable} ${dmMono.variable} font-sans antialiased text-slate-200 bg-[#0a101a]`}>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${dmSans.variable} ${playfair.variable} ${dmMono.variable} font-sans antialiased text-foreground bg-background transition-colors duration-300`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
-          enableSystem={false}
-          disableTransitionOnChange
+          enableSystem={true}
+          disableTransitionOnChange={false}
         >
           {children}
         </ThemeProvider>

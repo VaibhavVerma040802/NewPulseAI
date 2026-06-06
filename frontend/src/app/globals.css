@@ -8,34 +8,34 @@
   --font-serif: var(--font-playfair), ui-serif, Georgia, serif;
   --font-mono: var(--font-dm-mono), ui-monospace, SFMono-Regular, monospace;
 
-  /* Colors based on new UI */
-  --color-background: #0a101a;
-  --color-foreground: #f1f5f9;
+  /* Semantic Colors Mapped to Variables */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
   
-  --color-card: #141e2e;
-  --color-card-foreground: #f1f5f9;
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
   
-  --color-popover: #141e2e;
-  --color-popover-foreground: #f1f5f9;
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
   
-  --color-primary: #3b82f6;
-  --color-primary-foreground: #ffffff;
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
   
-  --color-secondary: #0f1623;
-  --color-secondary-foreground: #f1f5f9;
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
   
-  --color-muted: #1e2d45;
-  --color-muted-foreground: #64748b;
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
   
-  --color-accent: #1e2d45;
-  --color-accent-foreground: #f1f5f9;
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
   
-  --color-destructive: #ef4444;
-  --color-destructive-foreground: #f8fafc;
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
   
-  --color-border: #1e2d45;
-  --color-input: #0f1623;
-  --color-ring: #3b82f6;
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 
   --radius-lg: 0.5rem;
   --radius-md: calc(0.5rem - 2px);
@@ -43,41 +43,101 @@
 }
 
 @layer base {
+  :root {
+    --background: #f8fafc;
+    --foreground: #0f172a;
+    
+    --card: #ffffff;
+    --card-foreground: #0f172a;
+    
+    --popover: #ffffff;
+    --popover-foreground: #0f172a;
+    
+    --primary: #3b82f6;
+    --primary-foreground: #ffffff;
+    
+    --secondary: #f1f5f9;
+    --secondary-foreground: #0f172a;
+    
+    --muted: #f1f5f9;
+    --muted-foreground: #64748b;
+    
+    --accent: #f1f5f9;
+    --accent-foreground: #0f172a;
+    
+    --destructive: #ef4444;
+    --destructive-foreground: #f8fafc;
+    
+    --border: #e2e8f0;
+    --input: #ffffff;
+    --ring: #3b82f6;
+  }
+  
+  .dark {
+    --background: #0a101a;
+    --foreground: #f1f5f9;
+    
+    --card: #141e2e;
+    --card-foreground: #f1f5f9;
+    
+    --popover: #141e2e;
+    --popover-foreground: #f1f5f9;
+    
+    --primary: #3b82f6;
+    --primary-foreground: #ffffff;
+    
+    --secondary: #0f1623;
+    --secondary-foreground: #f1f5f9;
+    
+    --muted: #1e2d45;
+    --muted-foreground: #94a3b8;
+    
+    --accent: #1e2d45;
+    --accent-foreground: #f1f5f9;
+    
+    --destructive: #ef4444;
+    --destructive-foreground: #f8fafc;
+    
+    --border: #1e2d45;
+    --input: #0f1623;
+    --ring: #3b82f6;
+  }
+  
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground font-sans;
-    background-color: var(--color-background);
+    background-color: var(--background);
   }
   
   input, select, textarea {
-    @apply bg-[#0f1623] border border-[#1e2d45] text-[#f1f5f9] rounded-lg px-[13px] py-[9px] font-sans text-[13px] outline-none w-full transition-colors duration-200;
+    @apply bg-input border border-border text-foreground rounded-lg px-[13px] py-[9px] font-sans text-[13px] outline-none w-full transition-colors duration-200;
   }
   input:focus, select:focus {
-    @apply border-[#3b82f6];
+    @apply border-ring;
   }
   input::placeholder, textarea::placeholder {
-    @apply text-[#475569];
+    @apply text-muted-foreground;
   }
 
   ::-webkit-scrollbar {
     width: 4px;
   }
   ::-webkit-scrollbar-track {
-    background: #0a101a;
+    background: var(--background);
   }
   ::-webkit-scrollbar-thumb {
-    background: #1e2d45;
+    background: var(--border);
     border-radius: 4px;
   }
 }
 
 @layer components {
   .art-card {
-    @apply bg-[#141e2e] border border-[#1e2d45] rounded-xl p-[18px] cursor-pointer transition-colors duration-200;
+    @apply bg-card border border-border rounded-xl p-[18px] cursor-pointer transition-colors duration-200;
   }
   .art-card:hover {
-    @apply border-[#3b82f6];
+    @apply border-ring;
   }
 }

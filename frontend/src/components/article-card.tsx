@@ -98,24 +98,24 @@ export function ArticleCard({ article, initialBookmarked = false }: ArticleProps
               {sentiment}
             </span>
             {article.credibility && (
-              <span className="text-[10px] px-[7px] py-[3px] rounded bg-[#1e2d45] text-[#94a3b8]">
+              <span className="text-[10px] px-[7px] py-[3px] rounded bg-muted text-muted-foreground">
                 ✓ {cred}/100
               </span>
             )}
           </div>
-          <h3 className="font-serif text-[14px] font-bold text-[#f1f5f9] m-0 leading-[1.4]">
+          <h3 className="font-serif text-[14px] font-bold text-foreground m-0 leading-[1.4]">
             {article.title}
           </h3>
         </div>
         <div className="text-[28px] shrink-0">{catEmoji}</div>
       </div>
       
-      <p className="text-[12px] text-[#64748b] leading-[1.6] my-2 line-clamp-3">
+      <p className="text-[12px] text-muted-foreground leading-[1.6] my-2 line-clamp-3">
         {article.snippet}
       </p>
       
-      <div className="flex justify-between items-center mt-2 pt-2 border-t border-[#1e2d45]/50">
-        <span className="text-[11px] text-[#475569]">📰 {article.source_name} · {ago}</span>
+      <div className="flex justify-between items-center mt-2 pt-2 border-t border-border/50">
+        <span className="text-[11px] text-muted-foreground/80">📰 {article.source_name} · {ago}</span>
         <button 
           onClick={toggleBm} 
           className="bg-transparent border-none text-[16px] cursor-pointer hover:scale-110 transition-transform"

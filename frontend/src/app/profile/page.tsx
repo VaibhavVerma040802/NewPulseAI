@@ -42,19 +42,19 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a101a] font-sans pb-10">
+    <div className="min-h-screen bg-background font-sans pb-10">
       <Navbar />
       
       <div className="max-w-[760px] mx-auto px-[20px] pt-[28px]">
-        <h1 className="font-serif text-[26px] font-bold text-[#f1f5f9] m-0 mb-[24px]">Profile & Settings</h1>
+        <h1 className="font-serif text-[26px] font-bold text-foreground m-0 mb-[24px]">Profile & Settings</h1>
         
-        <div className="bg-[#141e2e] border border-[#1e2d45] rounded-2xl p-[24px] mb-[16px] flex gap-[18px] items-start">
-          <div className="w-[64px] h-[64px] rounded-full bg-gradient-to-br from-[#3b82f6] to-[#8b5cf6] flex items-center justify-center text-white font-bold text-[22px] shrink-0">
+        <div className="bg-card border border-border rounded-2xl p-[24px] mb-[16px] flex gap-[18px] items-start">
+          <div className="w-[64px] h-[64px] rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center text-white font-bold text-[22px] shrink-0">
             {getInitials()}
           </div>
           <div className="flex-1">
-            <h2 className="font-serif text-[20px] font-bold text-[#f1f5f9] m-0 mb-[3px]">{user?.full_name || "Loading..."}</h2>
-            <p className="text-[#64748b] text-[13px] font-sans m-0 mb-[10px]">{user?.email || "..."}</p>
+            <h2 className="font-serif text-[20px] font-bold text-foreground m-0 mb-[3px]">{user?.full_name || "Loading..."}</h2>
+            <p className="text-muted-foreground text-[13px] font-sans m-0 mb-[10px]">{user?.email || "..."}</p>
             <div className="flex gap-[14px]">
               {[
                 [stats?.articles_read || 0, "Read"], 
@@ -62,13 +62,13 @@ export default function ProfilePage() {
                 [stats?.queries || 0, "Queries"]
               ].map(([v, l]) => (
                 <div key={l as string} className="text-center">
-                  <p className="text-[#3b82f6] text-[17px] font-bold font-sans m-0">{v as string | number}</p>
-                  <p className="text-[#475569] text-[11px] font-sans m-0">{l as string}</p>
+                  <p className="text-primary text-[17px] font-bold font-sans m-0">{v as string | number}</p>
+                  <p className="text-muted-foreground/80 text-[11px] font-sans m-0">{l as string}</p>
                 </div>
               ))}
             </div>
           </div>
-          <button className="bg-transparent border border-[#1e2d45] text-[#94a3b8] px-[14px] py-[7px] rounded-lg cursor-pointer font-sans text-[12px] hover:bg-[#1e2d45]/50 transition-colors">
+          <button className="bg-transparent border border-border text-muted-foreground px-[14px] py-[7px] rounded-lg cursor-pointer font-sans text-[12px] hover:bg-muted/50 transition-colors">
             Edit
           </button>
         </div>
@@ -90,15 +90,15 @@ export default function ProfilePage() {
             ["Timezone", "Local time"]
           ]]
         ].map(([title, items]: any) => (
-          <div key={title} className="bg-[#141e2e] border border-[#1e2d45] rounded-2xl p-[22px] mb-[14px]">
-            <h3 className="font-serif text-[15px] font-bold text-[#f1f5f9] m-0 mb-[14px]">{title}</h3>
+          <div key={title} className="bg-card border border-border rounded-2xl p-[22px] mb-[14px]">
+            <h3 className="font-serif text-[15px] font-bold text-foreground m-0 mb-[14px]">{title}</h3>
             {items.map(([l, v]: any) => (
-              <div key={l} className="flex justify-between items-center py-[10px] border-b border-[#1e2d45] last:border-0">
+              <div key={l} className="flex justify-between items-center py-[10px] border-b border-border last:border-0">
                 <div>
-                  <p className="text-[#94a3b8] text-[13px] font-sans font-medium m-0">{l}</p>
-                  <p className="text-[#475569] text-[11px] font-sans m-0 mt-[2px]">{v}</p>
+                  <p className="text-muted-foreground text-[13px] font-sans font-medium m-0">{l}</p>
+                  <p className="text-muted-foreground/80 text-[11px] font-sans m-0 mt-[2px]">{v}</p>
                 </div>
-                <button className="bg-transparent border border-[#1e2d45] text-[#3b82f6] px-[13px] py-[5px] rounded-md cursor-pointer font-sans text-[12px] hover:bg-[#1e2d45]/50 transition-colors">
+                <button className="bg-transparent border border-border text-primary px-[13px] py-[5px] rounded-md cursor-pointer font-sans text-[12px] hover:bg-muted/50 transition-colors">
                   Change
                 </button>
               </div>

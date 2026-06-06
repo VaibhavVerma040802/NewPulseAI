@@ -38,9 +38,9 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0a101a] font-sans">
+      <div className="min-h-screen bg-background font-sans">
         <Navbar />
-        <div className="flex justify-center items-center h-[calc(100vh-57px)] text-[#3b82f6]">
+        <div className="flex justify-center items-center h-[calc(100vh-57px)] text-primary">
           Loading dashboard...
         </div>
       </div>
@@ -52,45 +52,45 @@ export default function DashboardPage() {
   const queries = stats?.queries || 0;
 
   return (
-    <div className="min-h-screen bg-[#0a101a] font-sans">
+    <div className="min-h-screen bg-background font-sans">
       <Navbar />
       
       <div className="max-w-[1100px] mx-auto px-5 py-[28px]">
         <div className="flex justify-between items-start mb-[28px] flex-wrap gap-4">
           <div>
-            <h1 className="font-serif text-[27px] font-bold text-[#f1f5f9] m-0 mb-[3px]">
+            <h1 className="font-serif text-[27px] font-bold text-foreground m-0 mb-[3px]">
               Good morning 👋
             </h1>
-            <p className="text-[#64748b] text-[13px] m-0">Your personalized news intelligence for today</p>
+            <p className="text-muted-foreground text-[13px] m-0">Your personalized news intelligence for today</p>
           </div>
           <button 
             onClick={() => router.push('/chat')}
-            className="bg-gradient-to-br from-[#3b82f6] to-[#6366f1] border-none text-white px-[18px] py-[9px] rounded-lg cursor-pointer font-medium text-[13px] hover:opacity-90 transition-opacity"
+            className="bg-gradient-to-br from-primary to-primary/80 border-none text-white px-[18px] py-[9px] rounded-lg cursor-pointer font-medium text-[13px] hover:opacity-90 transition-opacity"
           >
             💬 Ask AI
           </button>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[14px] mb-[24px]">
-          <div className="bg-[#141e2e] border border-[#1e2d45] rounded-xl p-[18px]">
-            <p className="text-[#64748b] text-[10px] font-semibold mb-[7px] uppercase tracking-[0.5px]">Articles Read</p>
-            <p className="text-[24px] font-bold text-[#3b82f6] mb-[3px]">{articlesRead}</p>
-            <p className="text-[#475569] text-[11px]">Total processed</p>
+          <div className="bg-card border border-border rounded-xl p-[18px]">
+            <p className="text-muted-foreground text-[10px] font-semibold mb-[7px] uppercase tracking-[0.5px]">Articles Read</p>
+            <p className="text-[24px] font-bold text-primary mb-[3px]">{articlesRead}</p>
+            <p className="text-muted-foreground/80 text-[11px]">Total processed</p>
           </div>
-          <div className="bg-[#141e2e] border border-[#1e2d45] rounded-xl p-[18px]">
-            <p className="text-[#64748b] text-[10px] font-semibold mb-[7px] uppercase tracking-[0.5px]">Time Saved</p>
+          <div className="bg-card border border-border rounded-xl p-[18px]">
+            <p className="text-muted-foreground text-[10px] font-semibold mb-[7px] uppercase tracking-[0.5px]">Time Saved</p>
             <p className="text-[24px] font-bold text-[#8b5cf6] mb-[3px]">{timeSaved}m</p>
-            <p className="text-[#475569] text-[11px]">Via AI Summaries</p>
+            <p className="text-muted-foreground/80 text-[11px]">Via AI Summaries</p>
           </div>
-          <div className="bg-[#141e2e] border border-[#1e2d45] rounded-xl p-[18px]">
-            <p className="text-[#64748b] text-[10px] font-semibold mb-[7px] uppercase tracking-[0.5px]">AI Queries</p>
+          <div className="bg-card border border-border rounded-xl p-[18px]">
+            <p className="text-muted-foreground text-[10px] font-semibold mb-[7px] uppercase tracking-[0.5px]">AI Queries</p>
             <p className="text-[24px] font-bold text-[#10b981] mb-[3px]">{queries}</p>
-            <p className="text-[#475569] text-[11px]">Chat interactions</p>
+            <p className="text-muted-foreground/80 text-[11px]">Chat interactions</p>
           </div>
-          <div className="bg-[#141e2e] border border-[#1e2d45] rounded-xl p-[18px]">
-            <p className="text-[#64748b] text-[10px] font-semibold mb-[7px] uppercase tracking-[0.5px]">Bookmarks</p>
+          <div className="bg-card border border-border rounded-xl p-[18px]">
+            <p className="text-muted-foreground text-[10px] font-semibold mb-[7px] uppercase tracking-[0.5px]">Bookmarks</p>
             <p className="text-[24px] font-bold text-[#f59e0b] mb-[3px]">{stats?.bookmarks_count || 0}</p>
-            <p className="text-[#475569] text-[11px]">Saved articles</p>
+            <p className="text-muted-foreground/80 text-[11px]">Saved articles</p>
           </div>
         </div>
 
@@ -103,8 +103,8 @@ export default function DashboardPage() {
                   onClick={() => setActiveTab(t.toLowerCase())}
                   className={`px-[13px] py-[6px] rounded-[18px] border cursor-pointer text-[12px] font-medium whitespace-nowrap transition-colors ${
                     activeTab === t.toLowerCase()
-                      ? "bg-[#3b82f6]/20 border-[#3b82f6] text-[#60a5fa]"
-                      : "bg-transparent border-[#1e2d45] text-[#64748b] hover:border-[#64748b]"
+                      ? "bg-primary/20 border-ring text-[#60a5fa]"
+                      : "bg-transparent border-border text-muted-foreground hover:border-[#64748b]"
                   }`}
                 >
                   {t}
@@ -118,26 +118,26 @@ export default function DashboardPage() {
                   <ArticleCard key={article.id} article={article} />
                 ))
               ) : (
-                <div className="text-center py-10 bg-[#141e2e] rounded-xl border border-[#1e2d45]">
-                  <p className="text-[#64748b] text-[14px]">No articles found in this category.</p>
+                <div className="text-center py-10 bg-card rounded-xl border border-border">
+                  <p className="text-muted-foreground text-[14px]">No articles found in this category.</p>
                 </div>
               )}
             </div>
           </div>
 
           <div className="flex flex-col gap-[16px]">
-            <div className="bg-[#141e2e] border border-[#1e2d45] rounded-xl p-[18px]">
-              <h3 className="font-serif text-[15px] text-[#f1f5f9] mb-[14px] font-bold">🔥 Trending Topics</h3>
+            <div className="bg-card border border-border rounded-xl p-[18px]">
+              <h3 className="font-serif text-[15px] text-foreground mb-[14px] font-bold">🔥 Trending Topics</h3>
               {["OpenAI GPT-5", "Federal Reserve", "Apple Earnings", "Climate Summit", "mRNA Vaccines"].map((t, i) => (
-                <div key={t} className="flex items-center gap-[8px] py-[7px] border-b border-[#1e2d45] last:border-0">
-                  <span className="text-[#3b82f6] text-[11px] font-mono font-semibold min-w-[18px]">#{i + 1}</span>
-                  <span className="text-[#94a3b8] text-[12px]">{t}</span>
+                <div key={t} className="flex items-center gap-[8px] py-[7px] border-b border-border last:border-0">
+                  <span className="text-primary text-[11px] font-mono font-semibold min-w-[18px]">#{i + 1}</span>
+                  <span className="text-muted-foreground text-[12px]">{t}</span>
                 </div>
               ))}
             </div>
 
-            <div className="bg-[#141e2e] border border-[#1e2d45] rounded-xl p-[18px]">
-              <h3 className="font-serif text-[15px] text-[#f1f5f9] mb-[14px] font-bold">📊 Today's Sentiment</h3>
+            <div className="bg-card border border-border rounded-xl p-[18px]">
+              <h3 className="font-serif text-[15px] text-foreground mb-[14px] font-bold">📊 Today's Sentiment</h3>
               {[
                 ["Positive", "67%", "#16a34a"], 
                 ["Neutral", "22%", "#d97706"], 
@@ -145,10 +145,10 @@ export default function DashboardPage() {
               ].map(([l, v, c]) => (
                 <div key={l} className="mb-[10px] last:mb-0">
                   <div className="flex justify-between mb-[3px]">
-                    <span className="text-[#94a3b8] text-[12px]">{l}</span>
+                    <span className="text-muted-foreground text-[12px]">{l}</span>
                     <span className="text-[12px] font-mono font-medium" style={{ color: c }}>{v}</span>
                   </div>
-                  <div className="h-[5px] bg-[#1e2d45] rounded-[3px] overflow-hidden">
+                  <div className="h-[5px] bg-muted rounded-[3px] overflow-hidden">
                     <div className="h-full rounded-[3px]" style={{ width: v, backgroundColor: c }}></div>
                   </div>
                 </div>
@@ -156,8 +156,8 @@ export default function DashboardPage() {
             </div>
 
             <div className="bg-gradient-to-br from-[#0f1d35] to-[#14122a] border border-[#6366f1]/30 rounded-xl p-[18px]">
-              <h3 className="font-serif text-[15px] text-[#f1f5f9] mb-[7px] font-bold">✨ AI Daily Brief</h3>
-              <p className="text-[#64748b] text-[12px] leading-[1.6] mb-[12px]">
+              <h3 className="font-serif text-[15px] text-foreground mb-[7px] font-bold">✨ AI Daily Brief</h3>
+              <p className="text-muted-foreground text-[12px] leading-[1.6] mb-[12px]">
                 Today's key stories span AI advancements, central bank policy, and a landmark climate finance agreement.
               </p>
               <button 

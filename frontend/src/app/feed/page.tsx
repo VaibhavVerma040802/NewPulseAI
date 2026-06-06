@@ -60,14 +60,14 @@ export default function FeedPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a101a] font-sans">
+    <div className="min-h-screen bg-background font-sans">
       <Navbar />
       
       <div className="max-w-[1050px] mx-auto px-5 py-[28px]">
         <div className="flex justify-between items-center mb-[24px] flex-wrap gap-4">
           <div>
-            <h1 className="font-serif text-[26px] font-bold text-[#f1f5f9] m-0">News Feed</h1>
-            <p className="text-[#64748b] text-[12px] m-0 mt-[3px]">
+            <h1 className="font-serif text-[26px] font-bold text-foreground m-0">News Feed</h1>
+            <p className="text-muted-foreground text-[12px] m-0 mt-[3px]">
               {articles.length > 0 ? `Showing ${articles.length} articles` : "Loading articles..."} · Updated just now
             </p>
           </div>
@@ -95,10 +95,10 @@ export default function FeedPage() {
             <button 
               key={c}
               onClick={() => setCategory(c === "All" ? "All Categories" : c)}
-              className={`px-[13px] py-[5px] rounded-[14px] border border-[#1e2d45] cursor-pointer text-[12px] font-medium transition-colors ${
+              className={`px-[13px] py-[5px] rounded-[14px] border border-border cursor-pointer text-[12px] font-medium transition-colors ${
                 (category === c || (category === "All Categories" && c === "All")) 
-                ? "bg-[#3b82f6]/20 border-[#3b82f6] text-[#60a5fa]" 
-                : "bg-transparent text-[#64748b] hover:border-[#64748b]"
+                ? "bg-primary/20 border-ring text-[#60a5fa]" 
+                : "bg-transparent text-muted-foreground hover:border-[#64748b]"
               }`}
             >
               {c}
@@ -107,7 +107,7 @@ export default function FeedPage() {
         </div>
 
         {loading ? (
-          <div className="flex justify-center items-center h-64 text-[#3b82f6]">Loading...</div>
+          <div className="flex justify-center items-center h-64 text-primary">Loading...</div>
         ) : articles.length > 0 ? (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-[16px]">
@@ -120,14 +120,14 @@ export default function FeedPage() {
               <button 
                 onClick={loadMore} 
                 disabled={loadingMore}
-                className="px-6 py-2 bg-[#141e2e] border border-[#1e2d45] text-[#94a3b8] hover:border-[#3b82f6] hover:text-[#f1f5f9] rounded-lg font-medium transition-colors flex items-center disabled:opacity-50 text-[13px] cursor-pointer"
+                className="px-6 py-2 bg-card border border-border text-muted-foreground hover:border-ring hover:text-foreground rounded-lg font-medium transition-colors flex items-center disabled:opacity-50 text-[13px] cursor-pointer"
               >
                 {loadingMore ? "Loading..." : "Load More ↓"}
               </button>
             </div>
           </>
         ) : (
-          <div className="flex justify-center items-center h-64 text-[#64748b] bg-[#141e2e] border border-[#1e2d45] rounded-xl">
+          <div className="flex justify-center items-center h-64 text-muted-foreground bg-card border border-border rounded-xl">
             No articles found for this category.
           </div>
         )}

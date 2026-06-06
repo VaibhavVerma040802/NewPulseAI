@@ -3,6 +3,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
+import { ThemeToggle } from "./theme-toggle";
 
 const SCREENS = [
   { id: "feed", label: "News Feed" },
@@ -44,16 +45,16 @@ export function Navbar() {
   const activeId = pathname.substring(1) || "dashboard";
 
   return (
-    <nav className="bg-[#0f1623] border-b border-[#1e2d45] px-5 flex items-center h-[56px] sticky top-0 z-[100]">
+    <nav className="bg-secondary border-b border-border px-5 flex items-center h-[56px] sticky top-0 z-[100]">
       <div 
         onClick={() => router.push("/")} 
         className="cursor-pointer flex items-center gap-2 mr-auto"
       >
-        <div className="w-[30px] h-[30px] rounded-lg bg-gradient-to-br from-[#3b82f6] to-[#8b5cf6] flex items-center justify-center text-[15px]">
+        <div className="w-[30px] h-[30px] rounded-lg bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center text-[15px]">
           ⚡
         </div>
-        <span className="font-serif font-bold text-[18px] text-[#f1f5f9]">
-          NewsPulse<span className="text-[#3b82f6]">AI</span>
+        <span className="font-serif font-bold text-[18px] text-foreground">
+          NewsPulse<span className="text-primary">AI</span>
         </span>
       </div>
       
@@ -63,19 +64,22 @@ export function Navbar() {
           onClick={() => router.push(`/${s.id}`)} 
           className={`bg-transparent border-none font-sans text-[13px] font-medium px-3 h-[56px] cursor-pointer border-b-2 transition-all duration-200 hidden md:block ${
             activeId.startsWith(s.id) 
-              ? "text-[#3b82f6] border-[#3b82f6]" 
-              : "text-[#94a3b8] border-transparent hover:text-[#cbd5e1]"
+              ? "text-primary border-ring" 
+              : "text-muted-foreground border-transparent hover:text-foreground/80"
           }`}
         >
           {s.label}
         </button>
       ))}
 
-      <div 
-        onClick={() => router.push("/profile")} 
-        className="w-[32px] h-[32px] rounded-full bg-gradient-to-br from-[#3b82f6] to-[#8b5cf6] flex items-center justify-center text-white font-bold text-[12px] cursor-pointer ml-3"
-      >
-        {userInitials}
+      <div className="flex items-center ml-3 gap-3">
+        <ThemeToggle />
+        <div 
+          onClick={() => router.push("/profile")} 
+          className="w-[32px] h-[32px] rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center text-white font-bold text-[12px] cursor-pointer"
+        >
+          {userInitials}
+        </div>
       </div>
     </nav>
   );

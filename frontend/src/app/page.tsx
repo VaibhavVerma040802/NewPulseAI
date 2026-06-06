@@ -6,25 +6,25 @@ export default function LandingPage() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-[#0a101a] font-sans">
-      <nav className="bg-[#0a101a]/95 border-b border-[#1e2d45] px-5 flex items-center h-[60px] sticky top-0 z-[100] backdrop-blur-sm">
+    <div className="min-h-screen bg-background font-sans">
+      <nav className="bg-background/95 border-b border-border px-5 flex items-center h-[60px] sticky top-0 z-[100] backdrop-blur-sm">
         <div className="flex items-center gap-2 mr-auto">
-          <div className="w-[34px] h-[34px] rounded-[10px] bg-gradient-to-br from-[#3b82f6] to-[#8b5cf6] flex items-center justify-center text-[17px]">
+          <div className="w-[34px] h-[34px] rounded-[10px] bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center text-[17px]">
             ⚡
           </div>
-          <span className="font-serif font-bold text-[20px] text-[#f1f5f9]">
-            NewsPulse<span className="text-[#3b82f6]">AI</span>
+          <span className="font-serif font-bold text-[20px] text-foreground">
+            NewsPulse<span className="text-primary">AI</span>
           </span>
         </div>
         <button 
           onClick={() => router.push('/login')} 
-          className="bg-transparent border border-[#1e2d45] text-[#94a3b8] px-[18px] py-[7px] rounded-lg cursor-pointer font-medium text-[13px] mr-2 hover:bg-[#1e2d45]/50 transition-colors"
+          className="bg-transparent border border-border text-muted-foreground px-[18px] py-[7px] rounded-lg cursor-pointer font-medium text-[13px] mr-2 hover:bg-muted/50 transition-colors"
         >
           Sign In
         </button>
         <button 
           onClick={() => router.push('/register')} 
-          className="bg-gradient-to-br from-[#3b82f6] to-[#6366f1] border-none text-white px-[18px] py-[7px] rounded-lg cursor-pointer font-semibold text-[13px] hover:opacity-90 transition-opacity"
+          className="bg-gradient-to-br from-primary to-primary/80 border-none text-white px-[18px] py-[7px] rounded-lg cursor-pointer font-semibold text-[13px] hover:opacity-90 transition-opacity"
         >
           Get Started
         </button>
@@ -33,30 +33,30 @@ export default function LandingPage() {
       <div className="pt-[80px] px-5 pb-[60px] text-center max-w-[800px] mx-auto relative">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[300px] bg-[radial-gradient(ellipse,rgba(59,130,246,0.1)_0%,transparent_70%)] pointer-events-none"></div>
         
-        <div className="inline-flex items-center gap-[7px] bg-[#3b82f6]/10 border border-[#3b82f6]/30 rounded-[20px] px-[14px] py-[5px] mb-[28px]">
-          <span className="w-[5px] h-[5px] rounded-full bg-[#3b82f6] inline-block"></span>
+        <div className="inline-flex items-center gap-[7px] bg-primary/10 border border-ring/30 rounded-[20px] px-[14px] py-[5px] mb-[28px]">
+          <span className="w-[5px] h-[5px] rounded-full bg-primary inline-block"></span>
           <span className="text-[#60a5fa] text-[12px] font-medium">Powered by RAG + LLM Technology</span>
         </div>
         
-        <h1 className="font-serif text-[42px] sm:text-[54px] font-black text-[#f1f5f9] leading-[1.1] mb-[20px]">
+        <h1 className="font-serif text-[42px] sm:text-[54px] font-black text-foreground leading-[1.1] mb-[20px]">
           News Intelligence,<br/>
-          <span className="bg-gradient-to-br from-[#3b82f6] to-[#8b5cf6] text-transparent bg-clip-text">Reimagined by AI</span>
+          <span className="bg-gradient-to-br from-primary to-primary/80 text-transparent bg-clip-text">Reimagined by AI</span>
         </h1>
         
-        <p className="text-[#64748b] text-[16px] sm:text-[17px] leading-[1.7] mb-[36px] font-light max-w-[600px] mx-auto">
+        <p className="text-muted-foreground text-[16px] sm:text-[17px] leading-[1.7] mb-[36px] font-light max-w-[600px] mx-auto">
           Stop reading. Start understanding. NewsPulse AI aggregates thousands of articles and distills them into AI summaries, sentiment analysis, and conversational insights — in seconds.
         </p>
         
         <div className="flex flex-col sm:flex-row gap-[14px] justify-center items-center">
           <button 
             onClick={() => router.push('/register')} 
-            className="w-full sm:w-auto bg-gradient-to-br from-[#3b82f6] to-[#6366f1] border-none text-white px-[32px] py-[12px] rounded-[10px] cursor-pointer font-semibold text-[15px] hover:scale-105 transition-transform"
+            className="w-full sm:w-auto bg-gradient-to-br from-primary to-primary/80 border-none text-white px-[32px] py-[12px] rounded-[10px] cursor-pointer font-semibold text-[15px] hover:scale-105 transition-transform"
           >
             Start for free →
           </button>
           <button 
             onClick={() => router.push('/dashboard')} 
-            className="w-full sm:w-auto bg-transparent border border-[#1e2d45] text-[#94a3b8] px-[32px] py-[12px] rounded-[10px] cursor-pointer text-[15px] hover:bg-[#1e2d45]/50 transition-colors"
+            className="w-full sm:w-auto bg-transparent border border-border text-muted-foreground px-[32px] py-[12px] rounded-[10px] cursor-pointer text-[15px] hover:bg-muted/50 transition-colors"
           >
             View Demo
           </button>
@@ -69,7 +69,7 @@ export default function LandingPage() {
           "Event Timelines", "RAG Chatbot", "Credibility Scores", 
           "Daily Brief", "Personalized Feed"
         ].map(f => (
-          <span key={f} className="bg-[#141e2e] border border-[#1e2d45] text-[#94a3b8] px-[16px] py-[7px] rounded-[20px] text-[12px] font-medium">
+          <span key={f} className="bg-card border border-border text-muted-foreground px-[16px] py-[7px] rounded-[20px] text-[12px] font-medium">
             {f}
           </span>
         ))}
@@ -84,20 +84,20 @@ export default function LandingPage() {
           ["📅", "Event Timelines", "Track how any story evolves over time. Auto-generated timelines cluster related articles chronologically."],
           ["🎯", "Credibility Scoring", "Cross-source verification and source reputation analysis to surface the most reliable reporting."]
         ].map(([ic, t, d]) => (
-          <div key={t} className="bg-[#141e2e] border border-[#1e2d45] rounded-[14px] p-6 hover:border-[#3b82f6] transition-colors">
+          <div key={t} className="bg-card border border-border rounded-[14px] p-6 hover:border-ring transition-colors">
             <div className="text-[28px] mb-3">{ic}</div>
-            <h3 className="font-serif text-[16px] font-bold text-[#f1f5f9] mb-2">{t}</h3>
-            <p className="text-[#64748b] text-[13px] leading-[1.6]">{d}</p>
+            <h3 className="font-serif text-[16px] font-bold text-foreground mb-2">{t}</h3>
+            <p className="text-muted-foreground text-[13px] leading-[1.6]">{d}</p>
           </div>
         ))}
       </div>
 
-      <div className="bg-gradient-to-br from-[#0f1d35] to-[#14122a] border-t border-[#1e2d45] py-[60px] px-5 text-center">
-        <h2 className="font-serif text-[36px] font-extrabold text-[#f1f5f9] mb-3">Start reading smarter today</h2>
-        <p className="text-[#64748b] text-[15px] mb-[28px]">Free to use. No credit card. Built as MCA Final Year Project.</p>
+      <div className="bg-gradient-to-br from-[#0f1d35] to-[#14122a] border-t border-border py-[60px] px-5 text-center">
+        <h2 className="font-serif text-[36px] font-extrabold text-foreground mb-3">Start reading smarter today</h2>
+        <p className="text-muted-foreground text-[15px] mb-[28px]">Free to use. No credit card. Built as MCA Final Year Project.</p>
         <button 
           onClick={() => router.push('/register')} 
-          className="bg-gradient-to-br from-[#3b82f6] to-[#6366f1] border-none text-white px-[40px] py-[12px] rounded-[10px] cursor-pointer font-semibold text-[15px] hover:scale-105 transition-transform"
+          className="bg-gradient-to-br from-primary to-primary/80 border-none text-white px-[40px] py-[12px] rounded-[10px] cursor-pointer font-semibold text-[15px] hover:scale-105 transition-transform"
         >
           Create Your Account →
         </button>
