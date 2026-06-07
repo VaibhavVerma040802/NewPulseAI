@@ -2,6 +2,7 @@ import logging
 from typing import List, Optional, Literal
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field
+import concurrent.futures
 
 from core.config import get_settings
 from models.article import (
@@ -47,7 +48,7 @@ class NLPPipeline:
         import random
         # Initialize Gemini LLM with structured output capabilities
         self.llm = ChatGoogleGenerativeAI(
-            model="gemini-pro",
+            model="gemini-1.5-flash",
             google_api_key=random.choice(settings.get_gemini_keys()),
             temperature=0.2
         )
@@ -69,17 +70,61 @@ class NLPPipeline:
             article.processing_status = ProcessingStatusEnum.PROCESSING
             self.db.commit()
             
-            # 1. Summarization
-            self._generate_summary(article, text_to_process)
+            # Use ThreadPoolExecutor to run LLM calls concurrently to avoid 10s timeout on Vercel
+            with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+                # Submit all tasks
+                f1 = executor.submit(self._generate_summary_task, text_to_process)
+                f2 = executor.submit(self._analyze_sentiment_task, text_to_process)
+                f3 = executor.submit(self._extract_entities_task, text_to_process)
+                f4 = executor.submit(self._analyze_credibility_task, text_to_process)
+                
+                # Wait for all to complete
+                summary_result = f1.result()
+                sentiment_result = f2.result()
+                entity_result = f3.result()
+                credibility_result = f4.result()
             
-            # 2. Sentiment Analysis
-            self._analyze_sentiment(article, text_to_process)
+            summary = Summary(
+                article_id=article.article_id,
+                summary_type=SummaryTypeEnum.QUICK,
+                summary_text=summary_result.summary_text,
+                model_used="gemini-1.5-flash"
+            )
+            self.db.add(summary)
             
-            # 3. Entity Extraction
-            self._extract_entities(article, text_to_process)
+            sentiment = SentimentAnalysis(
+                article_id=article.article_id,
+                headline_sentiment=sentiment_result.headline_sentiment,
+                headline_score=sentiment_result.headline_score,
+                body_sentiment=sentiment_result.body_sentiment,
+                body_score=sentiment_result.body_score,
+                compound_score=sentiment_result.compound_score,
+                model_used="gemini-1.5-flash"
+            )
+            self.db.add(sentiment)
             
-            # 4. Credibility Analysis
-            self._analyze_credibility(article, text_to_process)
+            entity_freq = {}
+            for ent in entity_result.entities:
+                key = (ent.entity_text, ent.entity_label)
+                entity_freq[key] = entity_freq.get(key, 0) + 1
+                
+            for (ent_text, ent_label), freq in entity_freq.items():
+                entity = ArticleEntity(
+                    article_id=article.article_id,
+                    entity_text=ent_text,
+                    entity_label=ent_label,
+                    frequency=freq
+                )
+                self.db.add(entity)
+                
+            credibility = CredibilityScore(
+                article_id=article.article_id,
+                score=credibility_result.score,
+                source_reputation_score=credibility_result.source_reputation_score,
+                cross_source_score=credibility_result.cross_source_score,
+                consistency_score=credibility_result.consistency_score
+            )
+            self.db.add(credibility)
             
             article.processing_status = ProcessingStatusEnum.COMPLETE
             self.db.commit()
@@ -95,73 +140,26 @@ class NLPPipeline:
                 self.db.rollback()
             return False
 
-    def _generate_summary(self, article: Article, text: str):
+    def _generate_summary_task(self, text: str) -> SummaryResult:
         parser = PydanticOutputParser(pydantic_object=SummaryResult)
         prompt = f"Provide a concise, 3-4 sentence summary of the following article:\n\n{text}\n\n{parser.get_format_instructions()}"
-        
         response = self.llm.invoke(prompt)
-        result = parser.invoke(response)
-        
-        summary = Summary(
-            article_id=article.article_id,
-            summary_type=SummaryTypeEnum.QUICK,
-            summary_text=result.summary_text,
-            model_used="gemini-pro"
-        )
-        self.db.add(summary)
+        return parser.invoke(response)
 
-    def _analyze_sentiment(self, article: Article, text: str):
+    def _analyze_sentiment_task(self, text: str) -> SentimentResult:
         parser = PydanticOutputParser(pydantic_object=SentimentResult)
         prompt = f"Analyze the sentiment of the headline and body of this article. Also provide an overall compound score between -1.0 (very negative) and 1.0 (very positive):\n\n{text}\n\n{parser.get_format_instructions()}"
-        
         response = self.llm.invoke(prompt)
-        result = parser.invoke(response)
-        
-        sentiment = SentimentAnalysis(
-            article_id=article.article_id,
-            headline_sentiment=result.headline_sentiment,
-            headline_score=result.headline_score,
-            body_sentiment=result.body_sentiment,
-            body_score=result.body_score,
-            compound_score=result.compound_score,
-            model_used="gemini-pro"
-        )
-        self.db.add(sentiment)
+        return parser.invoke(response)
 
-    def _extract_entities(self, article: Article, text: str):
+    def _extract_entities_task(self, text: str) -> EntityExtractionResult:
         parser = PydanticOutputParser(pydantic_object=EntityExtractionResult)
         prompt = f"Extract all key entities (People, Organizations, Locations, Events) mentioned in this article:\n\n{text}\n\n{parser.get_format_instructions()}"
-        
         response = self.llm.invoke(prompt)
-        result = parser.invoke(response)
-        
-        # Keep track of frequency
-        entity_freq = {}
-        for ent in result.entities:
-            key = (ent.entity_text, ent.entity_label)
-            entity_freq[key] = entity_freq.get(key, 0) + 1
-            
-        for (ent_text, ent_label), freq in entity_freq.items():
-            entity = ArticleEntity(
-                article_id=article.article_id,
-                entity_text=ent_text,
-                entity_label=ent_label,
-                frequency=freq
-            )
-            self.db.add(entity)
+        return parser.invoke(response)
 
-    def _analyze_credibility(self, article: Article, text: str):
+    def _analyze_credibility_task(self, text: str) -> CredibilityResult:
         parser = PydanticOutputParser(pydantic_object=CredibilityResult)
         prompt = f"Evaluate the credibility of this article based on journalistic standards, source reputation (if apparent), and content consistency. Provide a score between 0.0 and 100.0:\n\n{text}\n\n{parser.get_format_instructions()}"
-        
         response = self.llm.invoke(prompt)
-        result = parser.invoke(response)
-        
-        credibility = CredibilityScore(
-            article_id=article.article_id,
-            score=result.score,
-            source_reputation_score=result.source_reputation_score,
-            cross_source_score=result.cross_source_score,
-            consistency_score=result.consistency_score
-        )
-        self.db.add(credibility)
+        return parser.invoke(response)
