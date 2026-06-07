@@ -48,7 +48,7 @@ class NLPPipeline:
         import random
         # Initialize Gemini LLM with structured output capabilities
         self.llm = ChatGoogleGenerativeAI(
-            model="gemini-2.5-flash",
+            model="gemini-flash-latest",
             google_api_key=random.choice(settings.get_gemini_keys()),
             temperature=0.2
         )

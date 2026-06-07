@@ -16,6 +16,12 @@ export default function ArticlePage({ params }: { params: Promise<{ id: string }
   const [loadingSummary, setLoadingSummary] = useState(false);
 
   useEffect(() => {
+    if (!localStorage.getItem("token")) {
+      router.push("/login");
+    }
+  }, [router]);
+
+  useEffect(() => {
     const fetchArticle = async () => {
       try {
         const response = await api.get(`/news/${id}`);

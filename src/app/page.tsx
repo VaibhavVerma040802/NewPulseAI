@@ -75,21 +75,19 @@ export default function LandingPage() {
         ))}
       </div>
 
-      <div className="max-w-[1000px] mx-auto px-5 pb-[60px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {[
-          ["⚡", "AI Summaries", "BART + GPT-4o powered summaries at Quick, Detailed, and Executive levels. Read 10 articles in 2 minutes."],
-          ["💬", "Conversational News", "Ask questions about any article or topic. Our RAG pipeline retrieves relevant context and generates cited answers."],
-          ["📊", "Sentiment Dashboard", "Real-time sentiment analysis across all news categories with interactive charts and trend visualization."],
-          ["🔍", "Entity Intelligence", "NER extracts persons, organizations, and events — enabling entity-based exploration and search."],
-          ["📅", "Event Timelines", "Track how any story evolves over time. Auto-generated timelines cluster related articles chronologically."],
-          ["🎯", "Credibility Scoring", "Cross-source verification and source reputation analysis to surface the most reliable reporting."]
-        ].map(([ic, t, d]) => (
-          <div key={t} className="bg-card border border-border rounded-[14px] p-6 hover:border-ring transition-colors">
-            <div className="text-[28px] mb-3">{ic}</div>
-            <h3 className="font-serif text-[16px] font-bold text-foreground mb-2">{t}</h3>
-            <p className="text-muted-foreground text-[13px] leading-[1.6]">{d}</p>
+      <div className="max-w-[1000px] mx-auto px-5 pb-[60px]">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="font-serif text-[28px] font-bold text-foreground">Top Stories</h2>
+        </div>
+        {loadingPublicNews ? (
+          <div className="text-center text-muted-foreground py-10">Loading latest news...</div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {publicArticles.map((article: any) => (
+              <ArticleCard key={article.article_id} article={article} />
+            ))}
           </div>
-        ))}
+        )}
       </div>
 
       <div className="bg-gradient-to-br from-[#0f1d35] to-[#14122a] border-t border-border py-[60px] px-5 text-center">
