@@ -6,9 +6,11 @@ import { api } from "@/lib/api";
 import { Shield } from "lucide-react";
 
 interface AnalyticsData {
-  users: { total: number; new_24h: number };
+  users: { total: number; new_24h: number; active_today: number };
   news: { total_articles: number };
   ai: { total_summaries: number };
+  recent_users: any[];
+  health: { db_query_ms: number; uptime: string; error_rate: string; queued_jobs: number };
 }
 
 export default function AdminDashboard() {
