@@ -16,7 +16,7 @@ class RAGChatbot:
         import random
         self.vector_store = VectorStoreService()
         self.llm = ChatGoogleGenerativeAI(
-            model="gemini-1.5-flash",
+            model="gemini-2.5-flash",
             google_api_key=random.choice(settings.get_gemini_keys()),
             temperature=0.3
         )
