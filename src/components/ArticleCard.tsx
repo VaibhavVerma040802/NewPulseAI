@@ -100,7 +100,10 @@ export function ArticleCard({ article, initialBookmarked = false }: { article: A
   };
 
   const catColor = CATCOL[article.category] || "#6366f1";
-  const sentColor = SENTCOL[article.sentiment] || "#d97706";
+  const sentimentVal = typeof article.sentiment === 'object' && article.sentiment !== null 
+    ? (article.sentiment as any).headline_sentiment 
+    : article.sentiment;
+  const sentColor = SENTCOL[sentimentVal] || "#d97706";
   const icon = ICONS[article.category] || "📰";
 
   return (
@@ -118,7 +121,9 @@ export function ArticleCard({ article, initialBookmarked = false }: { article: A
               className="text-[10px] font-semibold px-[7px] py-[3px] rounded bg-opacity-20 uppercase"
               style={{ backgroundColor: `${sentColor}22`, color: sentColor }}
             >
-              {article.sentiment || "NEUTRAL"}
+              {typeof article.sentiment === 'object' && article.sentiment !== null 
+                ? (article.sentiment as any).headline_sentiment || "NEUTRAL" 
+                : (article.sentiment || "NEUTRAL")}
             </span>
             <span className="text-[10px] px-[7px] py-[3px] rounded bg-muted text-muted-foreground">
               ✓ {article.credibility_score || 90}/100
