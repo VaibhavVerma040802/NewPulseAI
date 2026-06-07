@@ -41,12 +41,17 @@ def register(user_in: UserCreate, background_tasks: BackgroundTasks, db: Session
         email=user_in.email,
         full_name=user_in.full_name,
         password_hash=get_password_hash(user_in.password),
-        email_verified=True,
-        status=StatusEnum.ACTIVE
+        email_verified=False,
+        status=StatusEnum.PENDING
     )
     db.add(user)
     db.commit()
     db.refresh(user)
+    
+    # Send verification email synchronously
+    from services.email_service import send_verification_email, create_verification_token
+    token = create_verification_token(user.email)
+    send_verification_email(user.email, token)
     
     return user
 
