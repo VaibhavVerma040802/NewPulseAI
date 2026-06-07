@@ -73,47 +73,8 @@ export function Sidebar() {
     closed: { x: "-100%", opacity: 0 }
   };
 
-  return (
+  const SidebarContent = () => (
     <>
-      {/* Mobile Header Toggle */}
-      <div className="md:hidden flex items-center justify-between p-4 border-b border-border bg-card sticky top-0 z-40">
-        <div 
-          onClick={() => handleNavigation("dashboard")} 
-          className="cursor-pointer flex items-center gap-2"
-        >
-          <div className="w-[30px] h-[30px] rounded-lg bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center text-[15px]">
-            ⚡
-          </div>
-          <span className="font-serif font-bold text-[18px] text-foreground">
-            NewsPulse<span className="text-primary">AI</span>
-          </span>
-        </div>
-        <button onClick={() => setIsOpen(true)} className="bg-transparent border-none text-foreground p-2 cursor-pointer">
-          <Menu size={24} />
-        </button>
-      </div>
-
-      {/* Backdrop for Mobile */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setIsOpen(false)}
-            className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 md:hidden"
-          />
-        )}
-      </AnimatePresence>
-
-      {/* Sidebar Content */}
-      <motion.div 
-        initial={false}
-        animate={isOpen ? "open" : "closed"}
-        variants={sidebarVariants}
-        transition={{ type: "spring", damping: 25, stiffness: 200 }}
-        className="fixed inset-y-0 left-0 w-[260px] bg-card border-r border-border flex flex-col z-50 md:relative md:translate-x-0 md:opacity-100"
-      >
         <div className="p-5 flex items-center justify-between">
           <div 
             onClick={() => handleNavigation("dashboard")} 
@@ -154,7 +115,6 @@ export function Sidebar() {
 
           <div className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2 px-3 mt-6">Settings</div>
           {SETTINGS.map(s => {
-             // Hide Admin link if user is not admin
              if (s.id === "admin" && userRole !== "ADMIN") return null;
 
              const Icon = s.icon;
@@ -197,7 +157,57 @@ export function Sidebar() {
             Logout
           </button>
         </div>
+    </>
+  );
+
+  return (
+    <>
+      {/* Mobile Header Toggle */}
+      <div className="md:hidden flex items-center justify-between p-4 border-b border-border bg-card sticky top-0 z-40">
+        <div 
+          onClick={() => handleNavigation("dashboard")} 
+          className="cursor-pointer flex items-center gap-2"
+        >
+          <div className="w-[30px] h-[30px] rounded-lg bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center text-[15px]">
+            ⚡
+          </div>
+          <span className="font-serif font-bold text-[18px] text-foreground">
+            NewsPulse<span className="text-primary">AI</span>
+          </span>
+        </div>
+        <button onClick={() => setIsOpen(true)} className="bg-transparent border-none text-foreground p-2 cursor-pointer">
+          <Menu size={24} />
+        </button>
+      </div>
+
+      {/* Backdrop for Mobile */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsOpen(false)}
+            className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 md:hidden"
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Mobile Sidebar Content */}
+      <motion.div 
+        initial={false}
+        animate={isOpen ? "open" : "closed"}
+        variants={sidebarVariants}
+        transition={{ type: "spring", damping: 25, stiffness: 200 }}
+        className="fixed inset-y-0 left-0 w-[260px] bg-card border-r border-border flex flex-col z-50 md:hidden"
+      >
+        <SidebarContent />
       </motion.div>
+
+      {/* Desktop Static Sidebar Content */}
+      <div className="hidden md:flex flex-col w-[260px] bg-card border-r border-border relative z-0 h-full">
+        <SidebarContent />
+      </div>
     </>
   );
 }
