@@ -1,9 +1,29 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { api } from "@/lib/api";
+import { ArticleCard } from "@/components/ArticleCard";
 
 export default function LandingPage() {
   const router = useRouter();
+  const [publicArticles, setPublicArticles] = useState([]);
+  const [loadingPublicNews, setLoadingPublicNews] = useState(true);
+
+  useEffect(() => {
+    const fetchPublicNews = async () => {
+      try {
+        const response = await api.get('/news/public');
+        setPublicArticles(response.data);
+      } catch (error) {
+        console.error('Failed to fetch public news:', error);
+      } finally {
+        setLoadingPublicNews(false);
+      }
+    };
+
+    fetchPublicNews();
+  }, []);
 
   return (
     <div className="min-h-screen bg-background font-sans">
