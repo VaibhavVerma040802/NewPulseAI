@@ -16,17 +16,39 @@ router = APIRouter(prefix="/recommendations", tags=["recommendations"])
 def get_vector_store():
     return VectorStoreService()
 
-@router.get("/search")
+@router.get("/search", response_model=List[ArticleResponse])
 def search_articles(
     query: str = Query(..., description="The topic or keywords to search for"),
-    limit: int = Query(5, ge=1, le=20),
+    limit: int = Query(10, ge=1, le=50),
+    db: Session = Depends(get_db),
     vector_store: VectorStoreService = Depends(get_vector_store)
 ):
     """
     Search for relevant articles based on semantic similarity.
     """
     results = vector_store.similarity_search(query, k=limit)
-    return {"results": results}
+    
+    # Extract article IDs
+    article_ids = []
+    for res in results:
+        aid = res["metadata"].get("article_id")
+        if aid and aid not in article_ids:
+            article_ids.append(aid)
+            
+    if not article_ids:
+        return []
+        
+    # Fetch articles
+    articles = db.query(Article).filter(Article.article_id.in_(article_ids)).all()
+    
+    # Sort them by relevance (the order in article_ids)
+    article_dict = {str(a.article_id): a for a in articles}
+    sorted_articles = []
+    for aid in article_ids:
+        if aid in article_dict:
+            sorted_articles.append(article_dict[aid])
+            
+    return sorted_articles
 
 @router.get("/personalized", response_model=List[ArticleResponse])
 def get_personalized_recommendations(

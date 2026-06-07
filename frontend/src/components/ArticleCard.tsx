@@ -72,6 +72,8 @@ export function ArticleCard({ article, initialBookmarked = false }: { article: A
     setBookmarked(!bookmarked);
   };
 
+  const articleId = article.id || (article as any).article_id;
+
   const handleSummarize = async (e: React.MouseEvent) => {
     e.stopPropagation();
     if (aiSummary) {
@@ -80,12 +82,16 @@ export function ArticleCard({ article, initialBookmarked = false }: { article: A
     }
     setSummarizing(true);
     try {
-      // Use full URL if article.id is string
-      const res = await api.post(`/nlp/summarize/${article.id}`);
+      // Fetch summary from the database
+      const res = await api.get(`/news/${articleId}/summary`);
       setAiSummary(res.data.summary);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setAiSummary("AI summary generation failed or timed out.");
+      if (err.response?.status === 404) {
+        setAiSummary("Summary not yet generated. Processing might be pending.");
+      } else {
+        setAiSummary("Failed to fetch AI summary.");
+      }
     } finally {
       setSummarizing(false);
     }
@@ -96,7 +102,7 @@ export function ArticleCard({ article, initialBookmarked = false }: { article: A
   const icon = ICONS[article.category] || "📰";
 
   return (
-    <div className="art-card" onClick={() => router.push(`/article/${article.id}`)}>
+    <div className="art-card" onClick={() => router.push(`/article/${articleId}`)}>
       <div className="flex justify-between items-start gap-2.5">
         <div className="flex-1">
           <div className="flex gap-1.5 mb-2 flex-wrap">

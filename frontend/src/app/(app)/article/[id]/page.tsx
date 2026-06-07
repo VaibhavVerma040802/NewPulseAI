@@ -145,14 +145,32 @@ export default function ArticlePage({ params }: { params: Promise<{ id: string }
           <div className="bg-card border border-border rounded-2xl p-[22px] mb-[20px]">
             <h3 className="font-serif text-[15px] text-foreground m-0 mb-[14px]">🏷️ Key Entities</h3>
             <div className="flex gap-[7px] flex-wrap">
-              {article.entities.map((e: any) => (
-                <span 
-                  key={e.entity_text} 
-                  className="px-[10px] py-[4px] rounded-lg bg-primary/10 border border-ring/30 text-[#60a5fa] text-[12px] font-sans font-medium"
-                >
-                  {e.entity_text} <span className="opacity-60 text-[10px] ml-1">{e.entity_type}</span>
-                </span>
-              ))}
+              {article.entities.map((e: any) => {
+                const type = e.entity_label || e.entity_type || "OTHER";
+                let bgColor = "rgba(59,130,246,0.15)";
+                let borderColor = "rgba(59,130,246,0.3)";
+                let textColor = "#60a5fa"; // blue
+
+                if (type === "PERSON") {
+                  bgColor = "rgba(168,85,247,0.15)"; borderColor = "rgba(168,85,247,0.3)"; textColor = "#c084fc"; // purple
+                } else if (type === "PRODUCT" || type === "EVENT") {
+                  bgColor = "rgba(34,197,94,0.15)"; borderColor = "rgba(34,197,94,0.3)"; textColor = "#4ade80"; // green
+                } else if (type === "GPE" || type === "LOC") {
+                  bgColor = "rgba(234,179,8,0.15)"; borderColor = "rgba(234,179,8,0.3)"; textColor = "#facc15"; // yellow
+                } else if (type === "MONEY" || type === "CARDINAL") {
+                  bgColor = "rgba(236,72,153,0.15)"; borderColor = "rgba(236,72,153,0.3)"; textColor = "#f472b6"; // pink
+                }
+
+                return (
+                  <span 
+                    key={e.entity_text} 
+                    className="px-[12px] py-[6px] rounded-[10px] border text-[13px] font-sans font-medium flex items-center gap-1.5"
+                    style={{ backgroundColor: bgColor, borderColor: borderColor, color: textColor }}
+                  >
+                    {e.entity_text} <span className="opacity-60 text-[10px] font-bold tracking-wider">{type}</span>
+                  </span>
+                );
+              })}
             </div>
           </div>
         )}
