@@ -47,7 +47,7 @@ class NLPPipeline:
         import random
         # Initialize Gemini LLM with structured output capabilities
         self.llm = ChatGoogleGenerativeAI(
-            model="gemini-2.5-flash-lite",
+            model="gemini-1.5-flash",
             google_api_key=random.choice(settings.get_gemini_keys()),
             temperature=0.2
         )
@@ -106,7 +106,7 @@ class NLPPipeline:
             article_id=article.article_id,
             summary_type=SummaryTypeEnum.QUICK,
             summary_text=result.summary_text,
-            model_used="gemini-2.5-flash-lite"
+            model_used="gemini-1.5-flash"
         )
         self.db.add(summary)
 
@@ -124,7 +124,7 @@ class NLPPipeline:
             body_sentiment=result.body_sentiment,
             body_score=result.body_score,
             compound_score=result.compound_score,
-            model_used="gemini-2.5-flash-lite"
+            model_used="gemini-1.5-flash"
         )
         self.db.add(sentiment)
 
