@@ -27,22 +27,19 @@ def get_trending_news(db: Session = Depends(get_db)) -> Any:
     .limit(4).all()
 
     trending = []
-    for idx, e in enumerate(top_entities_query):
-        # Fake a percentage metric for UI based on rank (just for display)
-        trend_val = f"+{24 - (idx * 5)}%"
+    
+    # Calculate total frequency to generate a real percentage trend
+    total_mentions = sum(e.total_freq for e in top_entities_query) if top_entities_query else 1
+    
+    for e in top_entities_query:
+        # Calculate real percentage relative to top mentions
+        percent = int((e.total_freq / total_mentions) * 100)
+        trend_val = f"+{percent}%" if percent > 0 else "Active"
         trending.append({
             "name": e.entity_text,
             "trend": trend_val
         })
     
-    if not trending:
-        trending = [
-            {"name": "Artificial Intelligence", "trend": "+24%"},
-            {"name": "Nvidia Corp", "trend": "+18%"},
-            {"name": "Federal Reserve", "trend": "+12%"},
-            {"name": "SpaceX", "trend": "+8%"}
-        ]
-        
     return trending
 
 @router.get("/public", response_model=List[ArticleResponse])
@@ -93,8 +90,19 @@ def get_article_summary(
     Retrieve the AI summary for a specific article.
     """
     summary = db.query(Summary).filter(Summary.article_id == article_id).first()
+    
     if not summary:
-        raise HTTPException(status_code=404, detail="Summary not found or not yet generated.")
+        # Trigger the pipeline dynamically if the summary doesn't exist
+        pipeline = NLPPipeline(db)
+        success = pipeline.process_article(article_id)
+        if not success:
+            raise HTTPException(status_code=500, detail="Failed to generate summary dynamically.")
+        
+        # Fetch the newly generated summary
+        summary = db.query(Summary).filter(Summary.article_id == article_id).first()
+        if not summary:
+            raise HTTPException(status_code=500, detail="Summary generated but could not be retrieved.")
+    
     
     return {"summary": summary.summary_text, "model": summary.model_used, "type": summary.summary_type}
 

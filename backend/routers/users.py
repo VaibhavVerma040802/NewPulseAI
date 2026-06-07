@@ -38,8 +38,14 @@ def get_user_dashboard(
 
     # 5. Reading Activity (Last 7 Days)
     # We will get counts grouped by day, then map them to the past 7 days
-    # This might require complex Postgres date_trunc, we can just do python processing for simplicity
-    last_7_days = db.query(
+    from datetime import datetime, timedelta
+    
+    today = datetime.now().date()
+    last_7_days_dates = [today - timedelta(days=i) for i in range(6, -1, -1)]
+    
+    activity_dict = {}
+    
+    last_7_days_query = db.query(
         func.date(UserReadHistory.read_at).label('read_date'),
         func.count(UserReadHistory.history_id).label('count')
     ).filter(
@@ -47,13 +53,14 @@ def get_user_dashboard(
         UserReadHistory.read_at >= func.now() - text("INTERVAL '7 DAYS'")
     ).group_by('read_date').all()
     
-    # Python processing for the 7 days array (Mon..Sun or just last 7 days)
-    # For now, just a mock array if there's no data, else map them.
-    # To keep the UI simple, we just return an array of 7 integers representing the last 7 days.
-    activity_data = [0] * 7
-    if last_7_days:
-        for idx, row in enumerate(last_7_days[:7]):
-            activity_data[idx] = row.count * 10 # Scale for UI, assuming percentages
+    for row in last_7_days_query:
+        activity_dict[row.read_date] = row.count
+        
+    activity_data = []
+    for d in last_7_days_dates:
+        # Scale for UI if needed, but keeping actual count is more accurate.
+        # The frontend expects values to plot. Let's just use the raw count.
+        activity_data.append(activity_dict.get(d, 0))
 
     # 6. Top Topics
     # Count categories of read articles
@@ -74,13 +81,6 @@ def get_user_dashboard(
         percent = int((t.count / total_cat_count) * 100)
         top_topics.append([t.category, percent, colors[i % len(colors)]])
     
-    if not top_topics:
-        top_topics = [
-            ["AI & Tech", 0, "#3b82f6"],
-            ["Global Markets", 0, "#10b981"],
-            ["Space Policy", 0, "#8b5cf6"],
-            ["Climate", 0, "#f59e0b"]
-        ]
 
     return {
         "stats": [
