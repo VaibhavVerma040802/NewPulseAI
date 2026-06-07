@@ -65,14 +65,20 @@ export function ArticleCard({ article, initialBookmarked = false }: { article: A
   const [aiSummary, setAiSummary] = useState<string | null>(null);
   const [summarizing, setSummarizing] = useState(false);
 
+  const articleId = (article as any).article_id || article.id;
+
   const toggleBm = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    // In a real implementation, you would call the backend here
-    // await api.post(`/articles/${article.id}/bookmark`);
+    // Optimistically update UI
     setBookmarked(!bookmarked);
+    try {
+      await api.post(`/bookmarks`, { article_id: articleId });
+    } catch (err) {
+      console.error("Failed to toggle bookmark:", err);
+      // Revert on failure
+      setBookmarked(bookmarked);
+    }
   };
-
-  const articleId = article.id || (article as any).article_id;
 
   const handleSummarize = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -82,16 +88,12 @@ export function ArticleCard({ article, initialBookmarked = false }: { article: A
     }
     setSummarizing(true);
     try {
-      // Fetch summary from the database
+      // Fetch summary from the database (auto-generates if missing)
       const res = await api.get(`/news/${articleId}/summary`);
       setAiSummary(res.data.summary);
     } catch (err: any) {
       console.error(err);
-      if (err.response?.status === 404) {
-        setAiSummary("Summary not yet generated. Processing might be pending.");
-      } else {
-        setAiSummary("Failed to fetch AI summary.");
-      }
+      setAiSummary("Failed to fetch AI summary. The article may still be processing.");
     } finally {
       setSummarizing(false);
     }

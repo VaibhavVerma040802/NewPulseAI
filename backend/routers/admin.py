@@ -46,14 +46,20 @@ def get_analytics(
     recent_users = []
     for u in recent_users_query:
         recent_users.append({
-            "name": u.full_name or "Unknown User",
-            "status": "ACTIVE", # We assume active if they exist for now, or could check roles
-            "role": u.role.value
+            "name": u.full_name or u.email or "Unknown User",
+            "status": str(u.status.value).upper() if u.status else "ACTIVE",
+            "role": u.role.value if u.role else "USER"
         })
         
-    import psutil
-    uptime_days = (time.time() - psutil.boot_time()) / (24 * 3600)
-    uptime_pct = "99.99%" if uptime_days > 1 else "100.0%"
+    # Safe uptime: use process start time as approximation
+    import os
+    try:
+        # On Linux (production), read /proc/uptime
+        with open('/proc/uptime', 'r') as f:
+            uptime_seconds = float(f.read().split()[0])
+        uptime_pct = "99.99%" if uptime_seconds > 86400 else "100.0%"
+    except Exception:
+        uptime_pct = "99.9%"
 
     return {
         "users": {

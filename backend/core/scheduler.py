@@ -74,29 +74,26 @@ def fetch_and_process_news():
                 
         logger.info(f"Finished fetching phase. Added {new_count} new raw articles.")
         
-        # 3. Process NLP queue (DISABLED DUE TO API LIMITS)
-        # We are skipping background NLP because the Gemini API free tier allows only 
-        # 20 requests per day for gemini-2.5-flash. Users will trigger NLP manually via the UI.
-        """
+        # 3. Process NLP queue for newly added articles
+        # Process a small batch per run to stay within Gemini free-tier limits
         from models.article import ProcessingStatusEnum
         pending_articles = db.query(Article).filter(
             Article.processing_status == ProcessingStatusEnum.PENDING
-        ).limit(5).all()
+        ).order_by(Article.published_at.desc()).limit(3).all()
         
         processed_count = 0
         for article in pending_articles:
             try:
-                # NLP Pipeline (Summarization, Sentiment, Entities)
-                nlp_pipeline.process_article(str(article.article_id))
-                
-                # ChromaDB Embeddings
-                vector_store.embed_article(article)
-                processed_count += 1
+                # NLP Pipeline (Summarization, Sentiment, Entities, Credibility)
+                success = nlp_pipeline.process_article(str(article.article_id))
+                if success:
+                    # ChromaDB Embeddings for search
+                    vector_store.embed_article(article)
+                    processed_count += 1
             except Exception as e_proc:
                 logger.error(f"Error in background NLP processing for {article.article_id}: {str(e_proc)}")
                 
         logger.info(f"Finished scheduled job. Background processed {processed_count} articles.")
-        """
         
     except Exception as e:
         logger.error(f"Error in scheduled news fetch job: {str(e)}")

@@ -11,6 +11,7 @@ export default function DashboardPage() {
   const [recentArticles, setRecentArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("recommended");
+  const [userName, setUserName] = useState("");
 
   useEffect(() => {
     if (!localStorage.getItem("token")) {
@@ -20,12 +21,16 @@ export default function DashboardPage() {
 
     const fetchData = async () => {
       try {
-        const [statsRes, articlesRes] = await Promise.all([
-          api.get("/users/me/stats").catch(() => ({ data: {} })),
-          api.get("/articles?limit=3").catch(() => ({ data: [] }))
+        const [statsRes, articlesRes, meRes] = await Promise.all([
+          api.get("/users/me/dashboard").catch(() => ({ data: {} })),
+          api.get("/news?limit=6").catch(() => ({ data: [] })),
+          api.get("/auth/me").catch(() => ({ data: {} }))
         ]);
         setStats(statsRes.data);
         setRecentArticles(articlesRes.data);
+        if (meRes.data?.full_name) {
+          setUserName(meRes.data.full_name.split(" ")[0]);
+        }
       } catch (error) {
         console.error("Failed to fetch dashboard data", error);
       } finally {
@@ -35,28 +40,48 @@ export default function DashboardPage() {
     fetchData();
   }, [router]);
 
+  // When tab changes, fetch different category of articles
+  useEffect(() => {
+    if (!localStorage.getItem("token")) return;
+    const fetchTabArticles = async () => {
+      try {
+        const catParam = activeTab === "recommended" ? "" : `&category=${activeTab}`;
+        const res = await api.get(`/news?limit=6${catParam}`).catch(() => ({ data: [] }));
+        setRecentArticles(res.data);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    fetchTabArticles();
+  }, [activeTab]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background font-sans">
-                <div className="flex justify-center items-center h-[calc(100vh-57px)] text-primary">
+        <div className="flex justify-center items-center h-[calc(100vh-57px)] text-primary">
           Loading dashboard...
         </div>
       </div>
     );
   }
 
-  const articlesRead = stats?.articles_read || 0;
-  const timeSaved = stats?.time_saved_minutes || 0;
-  const queries = stats?.queries || 0;
+  const articlesRead = stats?.articles_read ?? 0;
+  const timeSaved = stats?.time_saved_minutes ?? 0;
+  const bookmarks = stats?.bookmarks_count ?? 0;
+  const avgCred = stats?.avg_credibility ?? 0;
+  const trendingTopics: {name: string; rank: number}[] = stats?.trending_topics || [];
+  const sentimentBreakdown = stats?.sentiment_breakdown || { positive: 0, neutral: 0, negative: 0 };
+  
+  const greetingHour = new Date().getHours();
+  const greeting = greetingHour < 12 ? "Good morning" : greetingHour < 17 ? "Good afternoon" : "Good evening";
 
   return (
     <div className="min-h-screen bg-background font-sans">
-            
       <div className="max-w-[1100px] mx-auto px-5 py-[28px]">
         <div className="flex justify-between items-start mb-[28px] flex-wrap gap-4">
           <div>
             <h1 className="font-serif text-[27px] font-bold text-foreground m-0 mb-[3px]">
-              Good morning 👋
+              {greeting}{userName ? `, ${userName}` : ""} 👋
             </h1>
             <p className="text-muted-foreground text-[13px] m-0">Your personalized news intelligence for today</p>
           </div>
@@ -80,13 +105,13 @@ export default function DashboardPage() {
             <p className="text-muted-foreground/80 text-[11px]">Via AI Summaries</p>
           </div>
           <div className="bg-card border border-border rounded-xl p-[18px]">
-            <p className="text-muted-foreground text-[10px] font-semibold mb-[7px] uppercase tracking-[0.5px]">AI Queries</p>
-            <p className="text-[24px] font-bold text-[#10b981] mb-[3px]">{queries}</p>
-            <p className="text-muted-foreground/80 text-[11px]">Chat interactions</p>
+            <p className="text-muted-foreground text-[10px] font-semibold mb-[7px] uppercase tracking-[0.5px]">Avg Credibility</p>
+            <p className="text-[24px] font-bold text-[#10b981] mb-[3px]">{avgCred}/100</p>
+            <p className="text-muted-foreground/80 text-[11px]">Of articles read</p>
           </div>
           <div className="bg-card border border-border rounded-xl p-[18px]">
             <p className="text-muted-foreground text-[10px] font-semibold mb-[7px] uppercase tracking-[0.5px]">Bookmarks</p>
-            <p className="text-[24px] font-bold text-[#f59e0b] mb-[3px]">{stats?.bookmarks_count || 0}</p>
+            <p className="text-[24px] font-bold text-[#f59e0b] mb-[3px]">{bookmarks}</p>
             <p className="text-muted-foreground/80 text-[11px]">Saved articles</p>
           </div>
         </div>
@@ -94,7 +119,7 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
           <div className="lg:col-span-2">
             <div className="flex gap-[7px] mb-[16px] overflow-x-auto pb-2 scrollbar-hide">
-              {["Recommended", "Technology", "Business"].map(t => (
+              {["Recommended", "Technology", "Business", "Health", "Science"].map(t => (
                 <button 
                   key={t}
                   onClick={() => setActiveTab(t.toLowerCase())}
@@ -112,7 +137,7 @@ export default function DashboardPage() {
             <div className="flex flex-col gap-[14px]">
               {recentArticles.length > 0 ? (
                 recentArticles.map(article => (
-                  <ArticleCard key={article.id} article={article} />
+                  <ArticleCard key={(article as any).article_id || article.id} article={article} />
                 ))
               ) : (
                 <div className="text-center py-10 bg-card rounded-xl border border-border">
@@ -125,20 +150,24 @@ export default function DashboardPage() {
           <div className="flex flex-col gap-[16px]">
             <div className="bg-card border border-border rounded-xl p-[18px]">
               <h3 className="font-serif text-[15px] text-foreground mb-[14px] font-bold">🔥 Trending Topics</h3>
-              {["OpenAI GPT-5", "Federal Reserve", "Apple Earnings", "Climate Summit", "mRNA Vaccines"].map((t, i) => (
-                <div key={t} className="flex items-center gap-[8px] py-[7px] border-b border-border last:border-0">
-                  <span className="text-primary text-[11px] font-mono font-semibold min-w-[18px]">#{i + 1}</span>
-                  <span className="text-muted-foreground text-[12px]">{t}</span>
-                </div>
-              ))}
+              {trendingTopics.length > 0 ? (
+                trendingTopics.map((t, i) => (
+                  <div key={t.name} className="flex items-center gap-[8px] py-[7px] border-b border-border last:border-0">
+                    <span className="text-primary text-[11px] font-mono font-semibold min-w-[18px]">#{i + 1}</span>
+                    <span className="text-muted-foreground text-[12px]">{t.name}</span>
+                  </div>
+                ))
+              ) : (
+                <p className="text-muted-foreground text-[12px]">Processing articles to identify trends...</p>
+              )}
             </div>
 
             <div className="bg-card border border-border rounded-xl p-[18px]">
-              <h3 className="font-serif text-[15px] text-foreground mb-[14px] font-bold">📊 Today's Sentiment</h3>
+              <h3 className="font-serif text-[15px] text-foreground mb-[14px] font-bold">📊 Today&apos;s Sentiment</h3>
               {[
-                ["Positive", "67%", "#16a34a"], 
-                ["Neutral", "22%", "#d97706"], 
-                ["Negative", "11%", "#dc2626"]
+                ["Positive", `${sentimentBreakdown.positive}%`, "#16a34a"], 
+                ["Neutral", `${sentimentBreakdown.neutral}%`, "#d97706"], 
+                ["Negative", `${sentimentBreakdown.negative}%`, "#dc2626"]
               ].map(([l, v, c]) => (
                 <div key={l} className="mb-[10px] last:mb-0">
                   <div className="flex justify-between mb-[3px]">
@@ -150,15 +179,18 @@ export default function DashboardPage() {
                   </div>
                 </div>
               ))}
+              {sentimentBreakdown.positive === 0 && sentimentBreakdown.negative === 0 && (
+                <p className="text-muted-foreground text-[11px] mt-2">Sentiment data updates as articles are processed by AI.</p>
+              )}
             </div>
 
             <div className="bg-gradient-to-br from-[#0f1d35] to-[#14122a] border border-[#6366f1]/30 rounded-xl p-[18px]">
               <h3 className="font-serif text-[15px] text-foreground mb-[7px] font-bold">✨ AI Daily Brief</h3>
               <p className="text-muted-foreground text-[12px] leading-[1.6] mb-[12px]">
-                Today's key stories span AI advancements, central bank policy, and a landmark climate finance agreement.
+                Ask the AI chatbot for a daily summary of today&apos;s top stories across all categories.
               </p>
               <button 
-                onClick={() => router.push('/chat?q=daily_brief')}
+                onClick={() => router.push('/chat?prompt=Give me a brief summary of the most important news stories from today')}
                 className="bg-[#6366f1]/20 border border-[#6366f1]/40 text-[#a5b4fc] px-[14px] py-[7px] rounded-lg cursor-pointer text-[12px] hover:bg-[#6366f1]/30 transition-colors"
               >
                 Read Full Brief →
@@ -170,4 +202,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-

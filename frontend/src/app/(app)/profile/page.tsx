@@ -18,7 +18,7 @@ export default function ProfilePage() {
       try {
         const [userRes, statsRes] = await Promise.all([
           api.get("/auth/me"),
-          api.get("/users/me/stats").catch(() => ({ data: {} }))
+          api.get("/users/me/dashboard").catch(() => ({ data: {} }))
         ]);
         setUser(userRes.data);
         setStats(statsRes.data);

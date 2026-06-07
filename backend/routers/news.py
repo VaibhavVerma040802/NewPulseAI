@@ -80,6 +80,42 @@ def trigger_manual_fetch(background_tasks: BackgroundTasks):
     background_tasks.add_task(fetch_and_process_news)
     return {"message": "News fetch and processing job started in the background."}
 
+@router.get("/{article_id}", response_model=ArticleResponse)
+def get_single_article(
+    article_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+) -> Any:
+    """
+    Retrieve a single article by ID, and track it in the user's read history.
+    """
+    article = db.query(Article).filter(Article.article_id == article_id).first()
+    if not article:
+        raise HTTPException(status_code=404, detail="Article not found.")
+    
+    # Track read history
+    try:
+        from models.interaction import UserReadHistory
+        already_read = db.query(UserReadHistory).filter(
+            UserReadHistory.user_id == current_user.user_id,
+            UserReadHistory.article_id == article_id
+        ).first()
+        if not already_read:
+            history_entry = UserReadHistory(
+                user_id=current_user.user_id,
+                article_id=article.article_id
+            )
+            db.add(history_entry)
+            # Increment view count
+            article.view_count = (article.view_count or 0) + 1
+            db.commit()
+    except Exception as e:
+        db.rollback()
+    
+    return article
+
+
+
 @router.get("/{article_id}/summary")
 def get_article_summary(
     article_id: str,

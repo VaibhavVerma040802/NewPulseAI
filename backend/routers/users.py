@@ -81,8 +81,42 @@ def get_user_dashboard(
         percent = int((t.count / total_cat_count) * 100)
         top_topics.append([t.category, percent, colors[i % len(colors)]])
     
+    # 7. Bookmarks count
+    from models.interaction import UserBookmark
+    bookmarks_count = db.query(func.count(UserBookmark.bookmark_id)).filter(
+        UserBookmark.user_id == current_user.user_id
+    ).scalar() or 0
+    
+    # 8. Trending topics from the DB (most frequent entities overall)
+    from models.article import ArticleEntity as AE
+    trending_query = db.query(
+        AE.entity_text,
+        func.sum(AE.frequency).label('total_freq')
+    ).group_by(AE.entity_text).order_by(func.sum(AE.frequency).desc()).limit(5).all()
+    
+    trending_topics = [{"name": e.entity_text, "rank": i + 1} for i, e in enumerate(trending_query)]
+    
+    # 9. Today's sentiment breakdown (across all articles with sentiment data)
+    from models.article import SentimentAnalysis, SentimentEnum
+    from sqlalchemy import case
+    total_sentiment = db.query(func.count(SentimentAnalysis.sentiment_id)).scalar() or 1
+    positive_count = db.query(func.count(SentimentAnalysis.sentiment_id)).filter(SentimentAnalysis.headline_sentiment == SentimentEnum.POSITIVE).scalar() or 0
+    negative_count = db.query(func.count(SentimentAnalysis.sentiment_id)).filter(SentimentAnalysis.headline_sentiment == SentimentEnum.NEGATIVE).scalar() or 0
+    neutral_count = total_sentiment - positive_count - negative_count
+    
+    sentiment_breakdown = {
+        "positive": round((positive_count / total_sentiment) * 100),
+        "negative": round((negative_count / total_sentiment) * 100),
+        "neutral": round((neutral_count / total_sentiment) * 100)
+    }
 
     return {
+        "articles_read": articles_read,
+        "time_saved_minutes": time_saved_mins,
+        "entities_tracked": entities_tracked,
+        "avg_credibility": avg_credibility,
+        "bookmarks_count": bookmarks_count,
+        "queries": 0,  # Chat query count not tracked yet
         "stats": [
             ["Articles Read", str(articles_read), ""],
             ["Entities Tracked", str(entities_tracked), ""],
@@ -90,8 +124,20 @@ def get_user_dashboard(
             ["Avg Credibility", f"{avg_credibility}/100", ""]
         ],
         "activity": activity_data,
-        "top_topics": top_topics
+        "top_topics": top_topics,
+        "trending_topics": trending_topics,
+        "sentiment_breakdown": sentiment_breakdown
     }
+
+@router.get("/me/stats", response_model=Dict[str, Any])
+def get_user_stats(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Alias for /me/dashboard for backward compatibility."""
+    return get_user_dashboard(db=db, current_user=current_user)
+
+
 
 from pydantic import BaseModel
 from typing import List
