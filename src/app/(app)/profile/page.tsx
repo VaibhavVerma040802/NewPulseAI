@@ -8,6 +8,11 @@ export default function ProfilePage() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [stats, setStats] = useState<any>(null);
+  const [interests, setInterests] = useState<string[]>([]);
+  const [isEditingInterests, setIsEditingInterests] = useState(false);
+  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+
+  const CATEGORIES = ["Technology", "Business", "Politics", "Health", "Science", "Finance", "Entertainment"];
 
   useEffect(() => {
     if (!localStorage.getItem("token")) {
@@ -16,12 +21,15 @@ export default function ProfilePage() {
     }
     const fetchData = async () => {
       try {
-        const [userRes, statsRes] = await Promise.all([
+        const [userRes, statsRes, interestsRes] = await Promise.all([
           api.get("/auth/me"),
-          api.get("/users/me/dashboard").catch(() => ({ data: {} }))
+          api.get("/users/me/dashboard").catch(() => ({ data: {} })),
+          api.get("/users/me/interests").catch(() => ({ data: [] }))
         ]);
         setUser(userRes.data);
         setStats(statsRes.data);
+        setInterests(interestsRes.data);
+        setSelectedInterests(interestsRes.data);
       } catch (err) {
         console.error(err);
       }
@@ -32,6 +40,22 @@ export default function ProfilePage() {
   const handleLogout = () => {
     localStorage.removeItem("token");
     router.push("/login");
+  };
+
+  const saveInterests = async () => {
+    try {
+      await api.post("/users/me/interests", { categories: selectedInterests });
+      setInterests(selectedInterests);
+      setIsEditingInterests(false);
+    } catch (err) {
+      console.error("Failed to save interests", err);
+    }
+  };
+
+  const toggleInterest = (cat: string) => {
+    setSelectedInterests(prev => 
+      prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]
+    );
   };
 
   const getInitials = () => {
@@ -66,9 +90,57 @@ export default function ProfilePage() {
               ))}
             </div>
           </div>
-          <button className="bg-transparent border border-border text-muted-foreground px-[14px] py-[7px] rounded-lg cursor-pointer font-sans text-[12px] hover:bg-muted/50 transition-colors">
-            Edit
-          </button>
+        </div>
+
+        <div className="bg-card border border-border rounded-2xl p-[22px] mb-[14px]">
+          <div className="flex justify-between items-center mb-[14px]">
+            <h3 className="font-serif text-[15px] font-bold text-foreground m-0">News Preferences</h3>
+            {!isEditingInterests ? (
+              <button onClick={() => setIsEditingInterests(true)} className="bg-transparent border border-border text-muted-foreground px-[14px] py-[5px] rounded-lg cursor-pointer font-sans text-[11px] hover:bg-muted/50 transition-colors">
+                Edit Interests
+              </button>
+            ) : (
+              <div className="flex gap-2">
+                <button onClick={() => { setIsEditingInterests(false); setSelectedInterests(interests); }} className="bg-transparent border border-border text-muted-foreground px-[12px] py-[5px] rounded-lg cursor-pointer font-sans text-[11px] hover:bg-muted/50 transition-colors">
+                  Cancel
+                </button>
+                <button onClick={saveInterests} className="bg-primary border border-primary text-primary-foreground px-[12px] py-[5px] rounded-lg cursor-pointer font-sans text-[11px] hover:opacity-90 transition-opacity">
+                  Save
+                </button>
+              </div>
+            )}
+          </div>
+          
+          <div className="flex flex-wrap gap-[8px]">
+            {!isEditingInterests ? (
+              interests.length > 0 ? (
+                interests.map((cat: string) => (
+                  <span key={cat} className="px-[12px] py-[5px] rounded-[14px] bg-primary/20 border border-ring text-[#60a5fa] text-[12px] font-medium">
+                    {cat}
+                  </span>
+                ))
+              ) : (
+                <p className="text-muted-foreground text-[13px] italic m-0">No specific interests set. You will see general news.</p>
+              )
+            ) : (
+              CATEGORIES.map((cat: string) => {
+                const isSelected = selectedInterests.includes(cat);
+                return (
+                  <button
+                    key={cat}
+                    onClick={() => toggleInterest(cat)}
+                    className={`px-[12px] py-[5px] rounded-[14px] border cursor-pointer text-[12px] font-medium transition-colors ${
+                      isSelected 
+                        ? "bg-primary/20 border-ring text-[#60a5fa]" 
+                        : "bg-transparent border-border text-muted-foreground hover:border-[#64748b]"
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                );
+              })
+            )}
+          </div>
         </div>
 
         {[
