@@ -10,22 +10,10 @@
       "use": "@vercel/next"
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/api/(.*)",
-      "dest": "/api/index.py"
-    },
-    {
-      "src": "/_next/(.*)",
-      "dest": "/frontend/_next/$1"
-    },
-    {
-      "src": "/favicon.ico",
-      "dest": "/frontend/favicon.ico"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/frontend/$1"
+      "source": "/api/(.*)",
+      "destination": "/api/index.py"
     }
   ],
   "crons": [
